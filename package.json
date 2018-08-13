@@ -55,7 +55,8 @@
       "cordova-plugin-firebase": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

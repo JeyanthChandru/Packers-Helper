@@ -1,13 +1,7 @@
-<!--
-  Generated template for the HomePage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>home</ion-title>
+  <ion-navbar text-center color='primary'>
+    <ion-title>Dashboard</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -15,4 +9,27 @@
 
 <ion-content padding>
 
+  <ion-list>
+    <ion-list-header *ngIf="move == null" text-wrap>
+      No Data Yet. Try adding a new one using the button below.
+    </ion-list-header>
+    <ion-list-header *ngIf="move != null" text-wrap>
+      Following are the list of moves, you have added. Click/Long press to view/modify their content.
+    </ion-list-header>
+    <section *ngFor="let m of move">
+      <ion-card>
+        <ion-card-header>
+          Trip Name: {{m.name}}
+        </ion-card-header>
+        <ion-card-content>
+          Date: {{m.date}}
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </ion-list>
+  <ion-fab right bottom>
+    <button ion-fab (click)="addNewMove()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

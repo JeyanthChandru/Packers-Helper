@@ -1,0 +1,38 @@
+<ion-header>
+
+  <ion-navbar color='primary'>
+    <ion-title>New Move Schedule</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="closeModal()">
+        <span ion-text color="light" hideWhen="android,windows">CLOSE</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <form (ngSubmit)="addNew()">
+      <ion-list-header>
+        Provide a name and date of your move.
+      </ion-list-header>
+      <ion-item>
+        <ion-label>
+          Name:
+        </ion-label>
+        <ion-input placeholder='Houston to Austin'></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Date of Moving:
+        </ion-label>
+        <ion-datetime name="moveDate" [(ngModel)]="moveDate" displayFormat="MMM DD, YYYY"></ion-datetime>
+      </ion-item>
+      <ion-buttons end>
+        <button ion-button block clear type='submit'>Add</button>
+      </ion-buttons>
+    </form>
+  </ion-list>
+</ion-content>

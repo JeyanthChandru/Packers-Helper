@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the HomePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { MoveDetailsProvider } from '../../providers/move-details/move-details';
+import { Move } from '../../models/new-move/new-move.model';
 
 @IonicPage()
 @Component({
@@ -15,11 +10,22 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  move: Move[];
+
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    private modalCtrl: ModalController,
+    private moveDetails: MoveDetailsProvider) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad HomePage');
+  addNewMove(){
+    let modal = this.modalCtrl.create('NewMovePage');
+    modal.present();
+  }
+
+  ngOnInit(){
+    this.move = this.moveDetails.getMove();
   }
 
 }
