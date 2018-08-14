@@ -3,11 +3,25 @@
   <ion-navbar text-center color='primary'>
     <ion-title>Dashboard</ion-title>
   </ion-navbar>
+  <ion-toolbar>
+    <button ion-button full clear icon-left (click)="scanCode()">
+      <ion-icon name="qr-scanner"></ion-icon>Scan Code</button>
+  </ion-toolbar>
 
 </ion-header>
 
 
 <ion-content padding>
+
+  <ion-card *ngIf="scannedCode">
+    <ion-card-content>
+      Result from Scan: {{ scannedCode }}
+    </ion-card-content>
+    <span float-right ion-button icon-left clear (click)="scannedCode=''">
+      <ion-icon name="close"></ion-icon>
+      Clear
+    </span>
+  </ion-card>
 
   <ion-list>
     <ion-list-header *ngIf="move == null" text-wrap>

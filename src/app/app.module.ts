@@ -8,7 +8,7 @@ import { MyApp } from './app.component';
 import { MoveDetailsProvider } from '../providers/move-details/move-details';
 import { HttpClientModule } from '../../node_modules/@angular/common/http';
 import { BoxDetailsProvider } from '../providers/box-details/box-details';
-
+import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 @NgModule({
   declarations: [
     MyApp,
@@ -25,9 +25,10 @@ import { BoxDetailsProvider } from '../providers/box-details/box-details';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
     MoveDetailsProvider,
-    BoxDetailsProvider
+    BoxDetailsProvider,
+    BarcodeScanner
   ]
 })
-export class AppModule {}
+export class AppModule { }

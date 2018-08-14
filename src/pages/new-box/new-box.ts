@@ -8,8 +8,11 @@ import { FormGroup, FormBuilder, Validators, FormArray } from '../../../node_mod
   templateUrl: 'new-box.html',
 })
 export class NewBoxPage {
+  qrData = null;
+  createdCode = null;
 
   public form: FormGroup;
+  picture = null;
 
   constructor(
     public navCtrl: NavController,
@@ -42,12 +45,18 @@ export class NewBoxPage {
     control.removeAt(i);
   }
 
-  manage(val: any): void {
-    console.dir(val);
+  manage(val: Object): void {
+    val['appname'] = 'PackersHelper';
+    // var getQRImage = document.getElementsByClassName('new-box-class');
+    // console.log(getQRImage);
+    this.createdCode = JSON.stringify(val);
+    setTimeout(() => {
+      this.picture = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+    }, 300);
+    // console.log(val);
   }
 
   closeModal() {
     this.view.dismiss();
   }
-
 }

@@ -12,6 +12,15 @@
 
 
 <ion-content>
+
+  <!-- <img id="QR_Canvas_replica" src="{{picture}}" *ngIf="picture!=null"> -->
+  <ion-card *ngIf="createdCode">
+    <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode"></ngx-qrcode>
+    <ion-card-content>
+      <p>Value: {{ createdCode }}</p>
+    </ion-card-content>
+  </ion-card>
+
   <form [formGroup]="form" (ngSubmit)="manage(form.value)">
     <ion-list margin-bottom>
       <ion-item margin-bottom no-lines>
