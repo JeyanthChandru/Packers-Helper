@@ -11,6 +11,7 @@ import { Move } from '../../models/new-move/new-move.model';
 export class HomePage {
 
   move: Move[];
+  private openMovePage: string = 'OpenMovePage';
 
   constructor(
     public navCtrl: NavController, 

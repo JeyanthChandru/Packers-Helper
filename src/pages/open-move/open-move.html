@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar text-center color='primary'>
+  </ion-navbar>
+  <ion-toolbar text-center color='primary'>
+    <ion-title>{{moveName}} - {{moveDate}}</ion-title>
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <section *ngFor="let b of box">
+      <ion-card [navPush]='openBoxPage' [navParams]='{name: b.name}'>
+        <img src="../../assets/imgs/icon.png" />
+        <ion-card-header>
+          {{b.name}}
+        </ion-card-header>
+        <ion-card-content>
+          <ul>
+            <li *ngFor="let c of b.content">
+              {{c.name}} - {{c.quantity}}
+            </li>
+          </ul>
+        </ion-card-content>
+      </ion-card>
+    </section>
+    <ion-fab right bottom>
+      <button ion-fab (click)="addNewBox()">
+        <ion-icon name='add'></ion-icon>
+      </button>
+    </ion-fab>
+  </ion-list>
+</ion-content>

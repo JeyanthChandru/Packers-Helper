@@ -17,7 +17,7 @@
       Following are the list of moves, you have added. Click/Long press to view/modify their content.
     </ion-list-header>
     <section *ngFor="let m of move">
-      <ion-card>
+      <ion-card [navPush]='openMovePage' [navParams]='{name: m.name, date: m.date}'>
         <ion-card-header>
           Trip Name: {{m.name}}
         </ion-card-header>
