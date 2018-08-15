@@ -8,5 +8,11 @@
 
 
 <ion-content padding>
-
+  <ion-card-content>
+    <ul>
+      <li *ngFor="let c of content">
+        {{c.name}} - {{c.quantity}}
+      </li>
+    </ul>
+  </ion-card-content>
 </ion-content>

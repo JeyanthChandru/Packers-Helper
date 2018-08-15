@@ -11,8 +11,7 @@
 </ion-header>
 
 
-<ion-content padding>
-
+<ion-content>
   <ion-card *ngIf="scannedCode">
     <ion-card-content>
       Result from Scan: {{ scannedCode }}
@@ -30,16 +29,25 @@
     <ion-list-header *ngIf="move != null" text-wrap>
       Following are the list of moves, you have added. Click/Long press to view/modify their content.
     </ion-list-header>
-    <section *ngFor="let m of move">
-      <ion-card [navPush]='openMovePage' [navParams]='{name: m.name, date: m.date}'>
-        <ion-card-header>
-          Trip Name: {{m.name}}
-        </ion-card-header>
-        <ion-card-content>
-          Date: {{m.date}}
-        </ion-card-content>
-      </ion-card>
-    </section>
+    <ion-item-sliding *ngFor="let m of move">
+      <ion-item (press)="openActionSheet(m)" (tap)="openBoxPage(m)">
+        <!-- <ion-title>Trip Name: {{m.name}}</ion-title>
+        <ion-label>Date: {{m.date}}</ion-label> -->
+        <ion-card>
+          <ion-card-header>
+            Trip Name: {{m.name}}
+          </ion-card-header>
+          <ion-card-content>
+            Date: {{m.date}}
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+      <ion-item-options>
+        <button ion-button (click)="removeItem(m.key)">
+          Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
   <ion-fab right bottom>
     <button ion-fab (click)="addNewMove()">

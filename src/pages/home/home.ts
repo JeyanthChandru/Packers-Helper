@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, ActionSheetController } from 'ionic-angular';
 import { MoveDetailsProvider } from '../../providers/move-details/move-details';
 import { Move } from '../../models/new-move/new-move.model';
 import { BarcodeScannerOptions, BarcodeScanner } from '../../../node_modules/@ionic-native/barcode-scanner';
+import { Observable } from '../../../node_modules/rxjs';
 
 @IonicPage()
 @Component({
@@ -11,7 +12,12 @@ import { BarcodeScannerOptions, BarcodeScanner } from '../../../node_modules/@io
 })
 export class HomePage {
   scannedCode = null;
-
+  monthNames: string[] = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep",
+    "Oct", "Nov", "Dec"
+  ];
   move: Move[];
   private openMovePage: string = 'OpenMovePage';
 
@@ -20,7 +26,8 @@ export class HomePage {
     public navParams: NavParams,
     private modalCtrl: ModalController,
     private moveDetails: MoveDetailsProvider,
-    private barcodeScanner: BarcodeScanner) {
+    private barcodeScanner: BarcodeScanner,
+    private actionSheetCtrl: ActionSheetController) {
   }
 
   addNewMove() {
@@ -29,7 +36,17 @@ export class HomePage {
   }
 
   ngOnInit() {
-    this.move = this.moveDetails.getMove();
+    this.moveDetails.getMove().subscribe(data => {
+      this.move = data
+      for (var i = 0; i < this.move.length; i++) {
+        var date = this.move[i].date.split('-')
+        var day = date[2];
+        var monthIndex = Number(date[1]) - 1;
+        var year = date[0];
+        this.move[i].date = day + ' ' + this.monthNames[monthIndex] + ', ' + year
+      }
+    });
+
   }
 
   scanCode() {
@@ -48,6 +65,45 @@ export class HomePage {
     }, (err) => {
       console.log('Error: ', err);
     });
+  }
+
+  openBoxPage(m: Move) {
+    this.navCtrl.push('OpenMovePage', m);
+  }
+
+  removeItem(key) {
+    this.moveDetails.removeMove(key);
+  }
+
+  openActionSheet(m: Move) {
+    this.actionSheetCtrl.create({
+      title: 'Menu',
+      buttons: [
+        {
+          text: 'Open',
+          handler: () => {
+            this.openBoxPage(m);
+          }
+        }
+        , {
+          text: 'Edit',
+          handler: () => {
+            this.navCtrl.push('NewMovePage', m);
+            console.log(m);
+          }
+        }
+        , {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.removeItem(m.$key);
+          }
+        }
+        , {
+          text: 'Cancel',
+          role: 'cancel',
+        }]
+    }).present();
   }
 
 }

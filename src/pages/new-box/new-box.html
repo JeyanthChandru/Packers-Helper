@@ -14,7 +14,7 @@
 <ion-content>
 
   <!-- <img id="QR_Canvas_replica" src="{{picture}}" *ngIf="picture!=null"> -->
-  <ion-card *ngIf="createdCode">
+  <ion-card *ngIf="createdCode" hidden>
     <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode"></ngx-qrcode>
     <ion-card-content>
       <p>Value: {{ createdCode }}</p>

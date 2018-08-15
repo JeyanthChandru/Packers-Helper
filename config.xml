@@ -18,7 +18,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="SplashScreen" value="screen" />
     <preference name="FadeSplashScreenDuration" value="300" />
-    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashScreenDelay" value="1000" />
     <preference name="AutoHideSplashScreen" value="false" />
     <preference name="FadeSplashScreen" value="true" />
     <preference name="ShowSplashScreen" value="true" />
@@ -89,6 +89,8 @@
     <plugin name="phonegap-plugin-barcodescanner" spec="^8.0.0">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
+    <plugin name="cordova-plugin-printer" spec="^0.7.3" />
     <engine name="ios" spec="4.5.5" />
-    <engine name="android" spec="7.0.0" />
+    <engine name="android" spec="^7.1.1" />
+    <engine name="browser" spec="5.0.4" />
 </widget>

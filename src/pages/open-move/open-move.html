@@ -1,35 +1,37 @@
 <ion-header>
-
   <ion-navbar text-center color='primary'>
   </ion-navbar>
   <ion-toolbar text-center color='primary'>
     <ion-title>{{moveName}} - {{moveDate}}</ion-title>
   </ion-toolbar>
-
+  <button ion-button full clear color='secondary' (click)="printContent()">Print QR Code</button>
 </ion-header>
 
 
 <ion-content padding>
+  <ion-grid id='allBox' hidden>
+    <ion-row>
+      <ion-col col-3 *ngFor='let b of box'>
+        <img src='data:image/png;base64,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'
+        />
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
   <ion-list>
     <section *ngFor="let b of box">
       <ion-card [navPush]='openBoxPage' [navParams]='{name: b.name}'>
         <img src="../../assets/imgs/icon.png" />
-        <ion-card-header>
+        <ion-card-header text-center>
           {{b.name}}
         </ion-card-header>
-        <ion-card-content>
-          <ul>
-            <li *ngFor="let c of b.content">
-              {{c.name}} - {{c.quantity}}
-            </li>
-          </ul>
-        </ion-card-content>
       </ion-card>
     </section>
-    <ion-fab right bottom>
-      <button ion-fab (click)="addNewBox()">
-        <ion-icon name='add'></ion-icon>
-      </button>
-    </ion-fab>
   </ion-list>
+  <ion-fab right bottom>
+    <button ion-fab (click)="addNewBox()">
+      <ion-icon name='add'></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

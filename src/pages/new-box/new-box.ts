@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators, FormArray } from '../../../node_modules/@angular/forms';
+import { BoxDetailsProvider } from '../../providers/box-details/box-details';
+import { Box } from '../../models/box-model/box.model';
 
 @IonicPage()
 @Component({
@@ -12,13 +14,13 @@ export class NewBoxPage {
   createdCode = null;
 
   public form: FormGroup;
-  picture = null;
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     private view: ViewController,
-    private _FB: FormBuilder) {
+    private _FB: FormBuilder,
+    private boxDetails: BoxDetailsProvider) {
 
     this.form = this._FB.group({
       name: ['', Validators.required],
@@ -45,15 +47,15 @@ export class NewBoxPage {
     control.removeAt(i);
   }
 
-  manage(val: Object): void {
+  manage(val: Box): void {
+    let box: Box = val;
     val['appname'] = 'PackersHelper';
-    // var getQRImage = document.getElementsByClassName('new-box-class');
-    // console.log(getQRImage);
     this.createdCode = JSON.stringify(val);
     setTimeout(() => {
-      this.picture = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+      box['qr'] = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+      this.boxDetails.addBoxToDB(box);
+      this.closeModal();
     }, 300);
-    // console.log(val);
   }
 
   closeModal() {

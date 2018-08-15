@@ -1,4 +1,5 @@
-export interface Move{
+export interface Move {
+    $key?: string,
     name: string,
-    date: string
+    date: string,
 }

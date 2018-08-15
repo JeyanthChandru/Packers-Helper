@@ -14,7 +14,7 @@
 
 <ion-content padding>
   <ion-list>
-    <form (ngSubmit)="addNew()">
+    <form [formGroup]="form" (ngSubmit)="addNew(form.value)">
       <ion-list-header>
         Provide a name and date of your move.
       </ion-list-header>
@@ -22,16 +22,16 @@
         <ion-label>
           Name:
         </ion-label>
-        <ion-input placeholder='Houston to Austin'></ion-input>
+        <ion-input placeholder='Houston to Austin' [(ngModel)]="move.name" formControlName="name"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label>
           Date of Moving:
         </ion-label>
-        <ion-datetime name="moveDate" [(ngModel)]="moveDate" displayFormat="MMM DD, YYYY"></ion-datetime>
+        <ion-datetime placeholder="MMM DD, YYYY" [(ngModel)]="move.date" displayFormat="MMM DD, YYYY" formControlName="date"></ion-datetime>
       </ion-item>
       <ion-buttons end>
-        <button ion-button block clear type='submit'>Add</button>
+        <button ion-button block clear type='submit' [disabled]="!form.valid">Add</button>
       </ion-buttons>
     </form>
   </ion-list>
