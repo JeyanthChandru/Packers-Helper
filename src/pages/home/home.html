@@ -30,7 +30,7 @@
       Following are the list of moves, you have added. Click/Long press to view/modify their content.
     </ion-list-header>
     <ion-item-sliding *ngFor="let m of move">
-      <ion-item (press)="openActionSheet(m)" (tap)="openBoxPage(m)">
+      <ion-item (press)="openActionSheet(m)" (tap)="openMovePage(m)">
         <!-- <ion-title>Trip Name: {{m.name}}</ion-title>
         <ion-label>Date: {{m.date}}</ion-label> -->
         <ion-card>
@@ -43,7 +43,7 @@
         </ion-card>
       </ion-item>
       <ion-item-options>
-        <button ion-button (click)="removeItem(m.key)">
+        <button ion-button (click)="removeItem(m.$key)">
           Delete
         </button>
       </ion-item-options>

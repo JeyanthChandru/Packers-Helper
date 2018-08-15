@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, ActionSheetController } from 'ionic-angular';
 import { BoxDetailsProvider } from '../../providers/box-details/box-details';
 import { Box } from '../../models/box-model/box.model';
 import { Printer, PrintOptions } from '../../../node_modules/@ionic-native/printer';
@@ -14,13 +14,13 @@ import { Move } from '../../models/new-move/new-move.model';
 export class OpenMovePage {
   private box: Box[]
   private move: Move
-  private openBoxPage: string = 'OpenBoxPage';
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     private boxDetails: BoxDetailsProvider,
     private modalCtrl: ModalController,
-    private printer: Printer) {
+    private printer: Printer,
+    private actionSheetCtrl: ActionSheetController) {
     this.move = this.navParams.data;
   }
 
@@ -53,9 +53,41 @@ export class OpenMovePage {
     }, err => {
       console.log("Cannot Find Printer");
     });
+  }
 
+  openBoxPage(b: Box) {
+    this.navCtrl.push('OpenBoxPage', b);
+  }
 
-
+  openActionSheet(b: Box) {
+    this.actionSheetCtrl.create({
+      title: 'Menu',
+      buttons: [
+        {
+          text: 'Open',
+          handler: () => {
+            this.openBoxPage(b);
+          }
+        }
+        // , {
+        //   text: 'Edit',
+        //   handler: () => {
+        //     this.navCtrl.push('NewMovePage', m);
+        //     console.log(m);
+        //   }
+        // }
+        , {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.boxDetails.removeBox(b.$key);
+          }
+        }
+        , {
+          text: 'Cancel',
+          role: 'cancel',
+        }]
+    }).present();
   }
 
 }

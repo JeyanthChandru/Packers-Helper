@@ -8,7 +8,6 @@ import { map } from '../../../node_modules/rxjs/operators';
 @Injectable()
 export class MoveDetailsProvider {
   move: Observable<Move[]>;
-  move1: Observable<any[]>;
   dataRef: AngularFireList<Move>;
   constructor(public http: HttpClient,
     private db: AngularFireDatabase) {
@@ -33,7 +32,6 @@ export class MoveDetailsProvider {
   }
 
   removeMove(key: string) {
-    console.log(key);
     this.dataRef.remove(key);
   }
 

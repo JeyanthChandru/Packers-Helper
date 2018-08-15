@@ -3,7 +3,6 @@ import { IonicPage, NavController, NavParams, ModalController, ActionSheetContro
 import { MoveDetailsProvider } from '../../providers/move-details/move-details';
 import { Move } from '../../models/new-move/new-move.model';
 import { BarcodeScannerOptions, BarcodeScanner } from '../../../node_modules/@ionic-native/barcode-scanner';
-import { Observable } from '../../../node_modules/rxjs';
 
 @IonicPage()
 @Component({
@@ -19,8 +18,6 @@ export class HomePage {
     "Oct", "Nov", "Dec"
   ];
   move: Move[];
-  private openMovePage: string = 'OpenMovePage';
-
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -67,7 +64,7 @@ export class HomePage {
     });
   }
 
-  openBoxPage(m: Move) {
+  openMovePage(m: Move) {
     this.navCtrl.push('OpenMovePage', m);
   }
 
@@ -82,14 +79,13 @@ export class HomePage {
         {
           text: 'Open',
           handler: () => {
-            this.openBoxPage(m);
+            this.openMovePage(m);
           }
         }
         , {
           text: 'Edit',
           handler: () => {
             this.navCtrl.push('NewMovePage', m);
-            console.log(m);
           }
         }
         , {

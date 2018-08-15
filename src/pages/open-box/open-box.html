@@ -1,8 +1,16 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title>{{boxName}}</ion-title>
+    <ion-title text-center>{{box.name}}</ion-title>
   </ion-navbar>
+  <ion-toolbar>
+    <ion-buttons end>
+      <button ion-button full clear icon-left (click)="viewQR()">
+        <ion-icon name="barcode"></ion-icon>View QR Code
+      </button>
+      <button ion-button full clear (click)="printContent()">Print QR Code</button>
+    </ion-buttons>
+  </ion-toolbar>
 
 </ion-header>
 
@@ -10,7 +18,7 @@
 <ion-content padding>
   <ion-card-content>
     <ul>
-      <li *ngFor="let c of content">
+      <li *ngFor="let c of box.content">
         {{c.name}} - {{c.quantity}}
       </li>
     </ul>

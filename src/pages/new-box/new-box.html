@@ -14,12 +14,21 @@
 <ion-content>
 
   <!-- <img id="QR_Canvas_replica" src="{{picture}}" *ngIf="picture!=null"> -->
-  <ion-card *ngIf="createdCode" hidden>
-    <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode"></ngx-qrcode>
+  <ion-card *ngIf="createdCode">
+    <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode" qrc-errorCorrectionLevel="M"></ngx-qrcode>
     <ion-card-content>
       <p>Value: {{ createdCode }}</p>
     </ion-card-content>
   </ion-card>
+
+  <ion-item text-center>
+    <ion-fab right bottom>
+      <button ion-fab mini (click)=presentActionSheet()>
+        <ion-icon name="camera"></ion-icon>
+      </button>
+    </ion-fab>
+    <img src='{{photoURL}}' imageViewer/>
+  </ion-item>
 
   <form [formGroup]="form" (ngSubmit)="manage(form.value)">
     <ion-list margin-bottom>
