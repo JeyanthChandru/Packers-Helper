@@ -48,12 +48,12 @@ export class NewBoxPage {
   }
 
   manage(val: Box): void {
-    let box: Box = val;
     val['appname'] = 'PackersHelper';
     this.createdCode = JSON.stringify(val);
+    delete val['appname'];
     setTimeout(() => {
-      box['qr'] = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-      this.boxDetails.addBoxToDB(box);
+      val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+      this.boxDetails.addBoxToDB(val);
       this.closeModal();
     }, 300);
   }

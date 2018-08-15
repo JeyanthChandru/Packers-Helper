@@ -1,12 +1,12 @@
 export interface Box{
-    $key: string,
+    $key?: string,
     name: string,
     content: Array<Content>,
     qr: string,
 }
 
 export interface Content{
-    $key: string,
+    $key?: string,
     name: string,
     quantity: number
 }
