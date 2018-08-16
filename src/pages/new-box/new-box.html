@@ -15,10 +15,7 @@
 
   <!-- <img id="QR_Canvas_replica" src="{{picture}}" *ngIf="picture!=null"> -->
   <ion-card *ngIf="createdCode">
-    <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode" qrc-errorCorrectionLevel="M"></ngx-qrcode>
-    <ion-card-content>
-      <p>Value: {{ createdCode }}</p>
-    </ion-card-content>
+    <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode"></ngx-qrcode>
   </ion-card>
 
   <ion-item text-center>
@@ -27,7 +24,8 @@
         <ion-icon name="camera"></ion-icon>
       </button>
     </ion-fab>
-    <img src='{{photoURL}}' imageViewer/>
+    <img src='{{photoURL}}' *ngIf="box.image == undefined || photoRemoved == true" imageViewer/>
+    <img src='{{box.image}}' *ngIf='box.image != undefined && photoRemoved == false' imageViewer/>
   </ion-item>
 
   <form [formGroup]="form" (ngSubmit)="manage(form.value)">
@@ -35,7 +33,7 @@
       <ion-item margin-bottom no-lines>
         <ion-label floating>Box name:</ion-label>
 
-        <ion-input type="text" maxlength="40" formControlName="name"></ion-input>
+        <ion-input type="text" maxlength="40" formControlName="name" [(ngModel)]="box.name"></ion-input>
       </ion-item>
 
       <div formArrayName="content">

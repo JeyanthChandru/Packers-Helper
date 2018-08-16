@@ -3,6 +3,7 @@ export interface Box{
     name: string,
     content: Array<Content>,
     qr: string,
+    image?: string,
 }
 
 export interface Content{

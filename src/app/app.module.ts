@@ -14,9 +14,10 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Printer } from '../../node_modules/@ionic-native/printer';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from "angularfire2/auth";
 import { FIREBASE_CONFIG } from './app.firebase.config';
-import { FirebaseProvider } from '../providers/firebase/firebase';
-import { ImagePicker } from "@ionic-native/image-picker";
+import { IonicImageViewerModule } from '../../node_modules/ionic-img-viewer';
+import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,9 @@ import { ImagePicker } from "@ionic-native/image-picker";
     IonicModule.forRoot(MyApp),
     HttpClientModule,
     AngularFireModule.initializeApp(FIREBASE_CONFIG),
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    IonicImageViewerModule,
+    AngularFireAuthModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -43,8 +46,7 @@ import { ImagePicker } from "@ionic-native/image-picker";
     Printer,
     Camera,
     Crop,
-    FirebaseProvider,
-    ImagePicker
+    AuthServiceProvider,
   ]
 })
 export class AppModule { }

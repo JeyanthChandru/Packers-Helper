@@ -11,7 +11,10 @@ export class MoveDetailsProvider {
   dataRef: AngularFireList<Move>;
   constructor(public http: HttpClient,
     private db: AngularFireDatabase) {
-    this.dataRef = this.db.list<Move>('move');
+  }
+
+  initializeUser(userid) {
+    this.dataRef = this.db.list<Move>(userid + '/move');
     this.move = this.dataRef.snapshotChanges().pipe(
       map(changes =>
         changes.map(c => ({ $key: c.payload.key, ...c.payload.val() }))

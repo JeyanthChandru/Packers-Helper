@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController, ActionSheetController, normalizeURL, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, ActionSheetController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators, FormArray } from '../../../node_modules/@angular/forms';
 import { BoxDetailsProvider } from '../../providers/box-details/box-details';
 import { Box } from '../../models/box-model/box.model';
 import { CameraOptions, Camera } from '../../../node_modules/@ionic-native/camera';
-import { CropOptions, Crop } from '../../../node_modules/@ionic-native/crop';
-import { Platform } from '../../../node_modules/ionic-angular/platform/platform';
-import { FirebaseProvider } from '../../providers/firebase/firebase';
-import { ImagePicker } from '../../../node_modules/@ionic-native/image-picker';
 
 @IonicPage()
 @Component({
@@ -19,7 +15,8 @@ export class NewBoxPage {
   photoURL: string = "../../assets/imgs/icon.png";
 
   public form: FormGroup;
-  photos: Array<string>;
+  private box: Box;
+  private photoRemoved: boolean = false;
 
   constructor(
     public navCtrl: NavController,
@@ -28,12 +25,7 @@ export class NewBoxPage {
     private _FB: FormBuilder,
     private boxDetails: BoxDetailsProvider,
     private actionSheetCtrl: ActionSheetController,
-    private camera: Camera,
-    private cropService: Crop,
-    private platform: Platform,
-    private firebaseService: FirebaseProvider,
-    private toastCtrl: ToastController,
-    private imagePicker: ImagePicker) {
+    private camera: Camera) {
 
     this.form = this._FB.group({
       name: ['', Validators.required],
@@ -41,6 +33,19 @@ export class NewBoxPage {
         this.initContentFields()
       ])
     });
+
+    if (this.navParams.get('name') != undefined) {
+      this.box = this.navParams.data
+      this.form.controls.name.patchValue(this.box.name);
+      this.box.content.forEach(element => {
+        this.addValuesToInputField(element.name, element.quantity);
+      });
+      this.removeInputField(0);
+    }
+    else {
+      this.box = { $key: undefined, name: undefined, qr: undefined, image: undefined, content: [{ name: undefined, quantity: undefined }] }
+    }
+
   }
 
   initContentFields(): FormGroup {
@@ -50,67 +55,57 @@ export class NewBoxPage {
     });
   }
 
-  uploadImageToFirebase(image) {
-    image = normalizeURL(image);
-
-    //uploads img to firebase storage
-    this.firebaseService.uploadImage(image)
-      .then(photoURL => {
-
-        let toast = this.toastCtrl.create({
-          message: 'Image was updated successfully',
-          duration: 3000
-        });
-        toast.present();
-      })
+  addContentToFields(name, quantity): FormGroup {
+    return this._FB.group({
+      name: [name, Validators.required],
+      quantity: [quantity, Validators.required]
+    });
   }
 
-  takePicture() {
-    let options = {
-      quality: 100,
-      correctOrientation: true
-    };
+  async takePicture() {
+    try {
+      const options: CameraOptions = {
+        quality: 50,
+        targetWidth: 300,
+        targetHeight: 300,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        sourceType: this.camera.PictureSourceType.CAMERA,
+        saveToPhotoAlbum: false,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        allowEdit: true,
+      }
+      const result = await this.camera.getPicture(options);
 
-    this.camera.getPicture(options)
-      .then((data) => {
-        this.photos = new Array<string>();
-        this.cropService
-          .crop(data, { quality: 75 })
-          .then((newImage) => {
-            this.photos.push(newImage);
-            this.uploadImageToFirebase(newImage);
-          }, error => console.error("Error cropping image", error));
-      }, function (error) {
-        console.log(error);
-      });
+      const image = `data:image/jpeg;base64,${result}`;
+      this.photoURL = image;
+
+    }
+    catch (e) {
+      console.log('Camera Error : ', e);
+    }
   }
 
-  openImagePicker() {
-    this.imagePicker.hasReadPermission().then(
-      (result) => {
-        if (result == false) {
-          // no callbacks required as this opens a popup which returns async
-          this.imagePicker.requestReadPermission();
-        }
-        else if (result == true) {
-          this.imagePicker.getPictures({
-            maximumImagesCount: 1
-          }).then(
-            (results) => {
-              for (var i = 0; i < results.length; i++) {
-                this.cropService.crop(results[i], { quality: 75 }).then(
-                  newImage => {
-                    this.uploadImageToFirebase(newImage);
-                  },
-                  error => console.error("Error cropping image", error)
-                );
-              }
-            }, (err) => console.log(err)
-          );
-        }
-      }, (err) => {
-        console.log(err);
-      });
+  async importPicture() {
+    try {
+      const options: CameraOptions = {
+        quality: 50,
+        targetWidth: 300,
+        targetHeight: 300,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+        saveToPhotoAlbum: false,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        allowEdit: true,
+      }
+      const result = await this.camera.getPicture(options);
+      const image = `data:image/jpeg;base64,${result}`;
+      this.photoURL = image;
+    }
+    catch (e) {
+      console.log('Camera Error : ', e);
+    }
   }
 
   presentActionSheet() {
@@ -120,18 +115,22 @@ export class NewBoxPage {
         {
           text: 'Take Picture',
           handler: () => {
-            this.takePicture();
+            this.takePicture()
           }
         },
         {
           text: 'Import from Gallery',
           handler: () => {
-            this.openImagePicker();
+            this.importPicture()
           }
         },
         {
           text: 'Remove Picture',
-          role: 'destructive'
+          role: 'destructive',
+          handler: () => {
+            this.photoRemoved = true;
+            this.photoURL = "../../assets/imgs/icon.png";
+          }
         },
         {
           text: 'Cancel',
@@ -150,20 +149,52 @@ export class NewBoxPage {
     control.push(this.initContentFields());
   }
 
+  addValuesToInputField(name, quantity): void {
+    const control = <FormArray>this.form.controls.content;
+    control.push(this.addContentToFields(name, quantity));
+  }
+
   removeInputField(i: number): void {
     const control = <FormArray>this.form.controls.content;
     control.removeAt(i);
   }
 
   manage(val: Box): void {
-    val['appname'] = 'PackersHelper';
-    this.createdCode = JSON.stringify(val);
-    delete val['appname'];
-    setTimeout(() => {
-      val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-      this.boxDetails.addBoxToDB(val);
-      this.closeModal();
-    }, 300);
+    if (this.photoURL != "../../assets/imgs/icon.png") {
+      val.image = this.photoURL
+    }
+    if (this.box.$key != undefined) {
+      this.createdCode = JSON.stringify({
+        appname: 'PackersHelper',
+        move: this.boxDetails.getMoveKey(),
+        box: this.box.$key
+      });
+      setTimeout(() => {
+        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        if (this.photoURL == "../../assets/imgs/icon.png") {
+          this.boxDetails.addBoxToDB(this.box.$key, val);
+        }
+        else {
+          this.boxDetails.updateBox(this.box.$key, val);
+        }
+
+        this.closeModal();
+      }, 300);
+    }
+    else {
+      const key = this.boxDetails.createBox()
+      this.createdCode = JSON.stringify({
+        appname: 'PackersHelper',
+        move: this.boxDetails.getMoveKey(),
+        box: key,
+      });
+      setTimeout(() => {
+        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        this.boxDetails.addBoxToDB(key, val);
+        this.closeModal();
+      }, 300);
+
+    }
   }
 
   closeModal() {

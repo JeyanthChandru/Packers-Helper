@@ -3,8 +3,8 @@ import { IonicPage, NavController, NavParams, ModalController, ActionSheetContro
 import { BoxDetailsProvider } from '../../providers/box-details/box-details';
 import { Box } from '../../models/box-model/box.model';
 import { Printer, PrintOptions } from '../../../node_modules/@ionic-native/printer';
-import { Observable } from '../../../node_modules/rxjs';
 import { Move } from '../../models/new-move/new-move.model';
+import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
 @IonicPage()
 @Component({
@@ -20,14 +20,20 @@ export class OpenMovePage {
     private boxDetails: BoxDetailsProvider,
     private modalCtrl: ModalController,
     private printer: Printer,
-    private actionSheetCtrl: ActionSheetController) {
+    private actionSheetCtrl: ActionSheetController,
+    private authService: AuthServiceProvider) {
     this.move = this.navParams.data;
   }
 
   ngOnInit() {
-    this.boxDetails.getBoxDetails(this.move.$key).subscribe(data => {
-      this.box = data;
-    });
+    if (this, this.authService.getUID() == null) {
+      this.navCtrl.setRoot('LoginPage');
+    }
+    else {
+      this.boxDetails.getBoxDetails(this.authService.getUID().uid, this.move.$key).subscribe(data => {
+        this.box = data;
+      });
+    }
   }
 
   addNewBox() {

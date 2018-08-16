@@ -2,6 +2,9 @@
 
   <ion-navbar text-center color='primary'>
     <ion-title>Dashboard</ion-title>
+    <ion-buttons end>
+      <button ion-button full clear (click)='logout()'>Logout</button>
+    </ion-buttons>
   </ion-navbar>
   <ion-toolbar>
     <button ion-button full clear icon-left (click)="scanCode()">

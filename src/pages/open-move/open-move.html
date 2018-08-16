@@ -19,7 +19,8 @@
     </ion-grid>
     <section *ngFor="let b of box">
       <ion-card (press)="openActionSheet(b)" (tap)="openBoxPage(b)">
-        <img src="../../assets/imgs/icon.png" />
+        <img src="{{b.image}}" *ngIf="b.image != undefined" />
+        <img src="../../assets/imgs/icon.png" *ngIf="b.image == undefined" />
         <ion-card-header text-center>
           {{b.name}}
         </ion-card-header>

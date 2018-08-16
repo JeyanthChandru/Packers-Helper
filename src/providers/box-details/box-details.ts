@@ -10,11 +10,15 @@ import { map } from '../../../node_modules/rxjs/operators';
 export class BoxDetailsProvider {
   box: Observable<Box[]>
   dataRef: AngularFireList<Box>;
+  moveKey: string;
+  uid: string;
   constructor(public http: HttpClient, private db: AngularFireDatabase) {
   }
 
-  getBoxDetails(key) {
-    this.dataRef = this.db.list<Box>('/move/' + key + '/box');
+  getBoxDetails(uid, key) {
+    this.dataRef = this.db.list<Box>(uid + '/move/' + key + '/box');
+    this.moveKey = key;
+    this.uid = uid;
     this.box = this.dataRef.snapshotChanges().pipe(
       map(changes =>
         changes.map(c => ({ $key: c.payload.key, ...c.payload.val() }))
@@ -23,12 +27,24 @@ export class BoxDetailsProvider {
     return this.box;
   }
 
-  addBoxToDB(tempBox: Box) {
-    this.dataRef.push(tempBox);
+  createBox() {
+    return this.db.database.ref(this.uid + '/move/' + this.moveKey + '/box').push().key
+  }
+
+  updateBox(key, tempBox: Box) {
+    this.dataRef.update(key, tempBox)
+  }
+
+  addBoxToDB(key, tempBox: Box) {
+    this.db.database.ref(this.uid + '/move/' + this.moveKey + '/box').child(key).set(tempBox);
   }
 
   removeBox(key) {
     this.dataRef.remove(key);
+  }
+
+  getMoveKey() {
+    return this.moveKey;
   }
 
 }

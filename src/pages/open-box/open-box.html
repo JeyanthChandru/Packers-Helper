@@ -5,18 +5,20 @@
   </ion-navbar>
   <ion-toolbar>
     <ion-buttons end>
-      <button ion-button full clear icon-left (click)="viewQR()">
-        <ion-icon name="barcode"></ion-icon>View QR Code
+      <button ion-button full clear icon-left (click)="printQR()">
+        <ion-icon name="barcode"></ion-icon>Print QR Code
       </button>
-      <button ion-button full clear (click)="printContent()">Print QR Code</button>
+      <button ion-button full clear (click)="editBox(box)">Edit</button>
     </ion-buttons>
   </ion-toolbar>
-
 </ion-header>
 
 
 <ion-content padding>
   <ion-card-content>
+    <div id="oneBox" hidden>
+      <img src="{{box.qr}}" />
+    </div>
     <ul>
       <li *ngFor="let c of box.content">
         {{c.name}} - {{c.quantity}}
