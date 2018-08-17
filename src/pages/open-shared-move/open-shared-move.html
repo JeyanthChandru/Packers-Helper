@@ -2,11 +2,10 @@
   <ion-navbar text-center color='primary'>
   </ion-navbar>
   <ion-toolbar text-center color='primary'>
-    <ion-title>{{move.name}} - {{move.date}}</ion-title>
+    <ion-title>{{sharedMove.name}} - {{sharedMove.date}}</ion-title>
   </ion-toolbar>
   <button *ngIf="box && box.length != 0" ion-button full clear color='secondary' (click)="printContent()">Print QR Code</button>
 </ion-header>
-
 
 <ion-content padding>
   <ion-list>

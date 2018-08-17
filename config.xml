@@ -92,6 +92,6 @@
     <plugin name="cordova-plugin-printer" spec="^0.7.3" />
     <plugin name="cordova-plugin-camera" spec="^4.0.3" />
     <plugin name="cordova-plugin-crop" spec="^0.4.0" />
+    <engine name="android" spec="^7.1.1" />
     <engine name="ios" spec="4.5.5" />
-    <engine name="android" spec="7.0.0" />
 </widget>

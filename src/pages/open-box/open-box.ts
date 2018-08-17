@@ -15,7 +15,7 @@ export class OpenBoxPage {
   }
 
   editBox(box: Box) {
-    this.navCtrl.push('NewBoxPage', box);
+    this.navCtrl.push('NewBoxPage', { box: box });
   }
 
   printQR() {

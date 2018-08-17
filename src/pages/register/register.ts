@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController } from 'ionic-angular';
 import { Users } from '../../models/users/users.model';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
@@ -10,13 +10,14 @@ import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 })
 export class RegisterPage {
   user = {} as Users;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private authService: AuthServiceProvider) {
+  constructor(public navCtrl: NavController, private authService: AuthServiceProvider) {
   }
 
   async register(user: Users) {
     try {
       const result = await this.authService.registerUser(user);
-      console.log(result);
+      if (result.user.uid && result.user.uid != null) {
+      }
     }
     catch (e) {
       console.error(e);

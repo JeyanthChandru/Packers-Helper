@@ -8,7 +8,6 @@ import { Crop } from "@ionic-native/crop";
 
 import { MyApp } from './app.component';
 import { MoveDetailsProvider } from '../providers/move-details/move-details';
-import { HttpClientModule } from '../../node_modules/@angular/common/http';
 import { BoxDetailsProvider } from '../providers/box-details/box-details';
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Printer } from '../../node_modules/@ionic-native/printer';
@@ -18,6 +17,7 @@ import { AngularFireAuthModule } from "angularfire2/auth";
 import { FIREBASE_CONFIG } from './app.firebase.config';
 import { IonicImageViewerModule } from '../../node_modules/ionic-img-viewer';
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { SharedMoveDetailsProvider } from '../providers/shared-move-details/shared-move-details';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,6 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    HttpClientModule,
     AngularFireModule.initializeApp(FIREBASE_CONFIG),
     AngularFireDatabaseModule,
     IonicImageViewerModule,
@@ -47,6 +46,7 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     Camera,
     Crop,
     AuthServiceProvider,
+    SharedMoveDetailsProvider,
   ]
 })
 export class AppModule { }

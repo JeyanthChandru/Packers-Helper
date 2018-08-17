@@ -1,11 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '../../../node_modules/angularfire2/auth';
 import { Users } from '../../models/users/users.model';
 
 @Injectable()
 export class AuthServiceProvider {
-  constructor(public http: HttpClient, private auth: AngularFireAuth) {
+  constructor(private auth: AngularFireAuth) {
   }
 
   getUID() {
@@ -20,8 +19,20 @@ export class AuthServiceProvider {
     return this.auth.auth.signInWithEmailAndPassword(user.email, user.password);
   }
 
-  logoutUser() {
-    return this.auth.auth.signOut();
+  logoutUser(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.auth.auth.signOut()
+        .then((data: any) => {
+          resolve(data);
+        })
+        .catch((error: any) => {
+          reject(error);
+        });
+    });
+  }
+
+  getEmail() {
+    return this.auth.auth.currentUser.email
   }
 
 }

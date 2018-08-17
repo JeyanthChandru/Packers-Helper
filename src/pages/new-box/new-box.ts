@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController, ActionSheetController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController, ActionSheetController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators, FormArray } from '../../../node_modules/@angular/forms';
 import { BoxDetailsProvider } from '../../providers/box-details/box-details';
 import { Box } from '../../models/box-model/box.model';
 import { CameraOptions, Camera } from '../../../node_modules/@ionic-native/camera';
+import { get } from '../../../node_modules/@ionic-native/core';
 
 @IonicPage()
 @Component({
@@ -16,17 +17,16 @@ export class NewBoxPage {
 
   public form: FormGroup;
   private box: Box;
-  private photoRemoved: boolean = false;
+  private photoRemoved: boolean;
 
   constructor(
-    public navCtrl: NavController,
     public navParams: NavParams,
     private view: ViewController,
     private _FB: FormBuilder,
     private boxDetails: BoxDetailsProvider,
     private actionSheetCtrl: ActionSheetController,
     private camera: Camera) {
-
+    this.photoRemoved = false;
     this.form = this._FB.group({
       name: ['', Validators.required],
       content: this._FB.array([
@@ -34,8 +34,16 @@ export class NewBoxPage {
       ])
     });
 
-    if (this.navParams.get('name') != undefined) {
-      this.box = this.navParams.data
+    if (this.navParams.get('box') != undefined) {
+      this.box = this.navParams.get('box');
+      this.form.controls.name.patchValue(this.box.name);
+      this.box.content.forEach(element => {
+        this.addValuesToInputField(element.name, element.quantity);
+      });
+      this.removeInputField(0);
+    }
+    else if (this.navParams.get('sharedBox') != undefined) {
+      this.box = this.navParams.get('sharedBox');
       this.form.controls.name.patchValue(this.box.name);
       this.box.content.forEach(element => {
         this.addValuesToInputField(element.name, element.quantity);
@@ -163,7 +171,7 @@ export class NewBoxPage {
     if (this.photoURL != "../../assets/imgs/icon.png") {
       val.image = this.photoURL
     }
-    if (this.box.$key != undefined) {
+    if (this.navParams.get('box') != undefined) {
       this.createdCode = JSON.stringify({
         appname: 'PackersHelper',
         move: this.boxDetails.getMoveKey(),
@@ -181,6 +189,37 @@ export class NewBoxPage {
         this.closeModal();
       }, 300);
     }
+    else if (this.navParams.get('sharedBox') != undefined) {
+      this.createdCode = JSON.stringify({
+        appname: 'PackersHelper',
+        move: this.boxDetails.getSharedMoveKey(),
+        box: this.box.$key
+      });
+      setTimeout(() => {
+        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        if (this.photoURL == "../../assets/imgs/icon.png") {
+          this.boxDetails.addSharedBoxToDB(this.box.$key, val);
+        }
+        else {
+          this.boxDetails.updateBox(this.box.$key, val);
+        }
+
+        this.closeModal();
+      }, 300);
+    }
+    else if (this.navParams.get('isSharedBox') != undefined) {
+      const key = this.boxDetails.createSharedBox()
+      this.createdCode = JSON.stringify({
+        appname: 'PackersHelper',
+        move: this.boxDetails.getMoveKey(),
+        box: key,
+      });
+      setTimeout(() => {
+        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        this.boxDetails.addSharedBoxToDB(key, val);
+        this.closeModal();
+      }, 300);
+    }
     else {
       const key = this.boxDetails.createBox()
       this.createdCode = JSON.stringify({
@@ -193,7 +232,6 @@ export class NewBoxPage {
         this.boxDetails.addBoxToDB(key, val);
         this.closeModal();
       }, 300);
-
     }
   }
 

@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Box } from '../../models/box-model/box.model';
 import { Observable } from '../../../node_modules/rxjs';
@@ -12,7 +11,9 @@ export class BoxDetailsProvider {
   dataRef: AngularFireList<Box>;
   moveKey: string;
   uid: string;
-  constructor(public http: HttpClient, private db: AngularFireDatabase) {
+  sharedKey: string;
+  sharedMoveKey: string;
+  constructor(private db: AngularFireDatabase) {
   }
 
   getBoxDetails(uid, key) {
@@ -27,16 +28,41 @@ export class BoxDetailsProvider {
     return this.box;
   }
 
+  getSharedBoxDetails(sharedKey, key) {
+    this.dataRef = this.db.list<Box>('shared/' + sharedKey + '/' + key + '/box');
+    this.sharedMoveKey = key;
+    this.sharedKey = sharedKey;
+    this.box = this.dataRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c => ({ $key: c.payload.key, ...c.payload.val() }))
+      )
+    );
+    return this.box;
+  }
+
   createBox() {
     return this.db.database.ref(this.uid + '/move/' + this.moveKey + '/box').push().key
   }
 
-  updateBox(key, tempBox: Box) {
-    this.dataRef.update(key, tempBox)
+  createSharedBox() {
+    return this.db.database.ref('shared/').child(this.sharedKey).child(this.sharedMoveKey).child('Box').push().key
+    // return this.db.database.ref('shared/' + this.sharedKey + '/' + this.sharedMoveKey + '/box/').push().key
   }
+
+  updateBox(key, tempBox: Box) {
+    this.dataRef.update(key, tempBox);
+  }
+
+  // updateSharedBox(key, tempBox: Box) {
+  //   this.dataRef.update(key, tempBox);
+  // }
 
   addBoxToDB(key, tempBox: Box) {
     this.db.database.ref(this.uid + '/move/' + this.moveKey + '/box').child(key).set(tempBox);
+  }
+
+  addSharedBoxToDB(key, tempBox: Box) {
+    this.db.database.ref('shared/' + this.sharedKey + '/' + this.sharedMoveKey + '/box').child(key).set(tempBox);
   }
 
   removeBox(key) {
@@ -45,6 +71,10 @@ export class BoxDetailsProvider {
 
   getMoveKey() {
     return this.moveKey;
+  }
+
+  getSharedMoveKey() {
+    return this.sharedMoveKey;
   }
 
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController } from 'ionic-angular';
 import { MoveDetailsProvider } from '../../providers/move-details/move-details';
 import { Move } from '../../models/new-move/new-move.model';
 import { FormGroup, FormBuilder, Validators } from '../../../node_modules/@angular/forms';
@@ -10,12 +10,11 @@ import { FormGroup, FormBuilder, Validators } from '../../../node_modules/@angul
   templateUrl: 'new-move.html',
 })
 export class NewMovePage {
-  move: Move = { name: '', date: '' };
+  move = {} as Move;
   public form: FormGroup
   constructor(
-    public navCtrl: NavController,
     public navParams: NavParams,
-    private view: ViewController,
+    private viewCtrl: ViewController,
     private moveDetails: MoveDetailsProvider,
     private _FB: FormBuilder) {
     this.form = this._FB.group({
@@ -32,15 +31,17 @@ export class NewMovePage {
   addNew(move: Move) {
     if (this.navParams.get('date') != undefined) {
       this.moveDetails.updateMove(this.move.$key, move);
+      this.viewCtrl.dismiss({ edited: true });
     }
     else {
       this.moveDetails.addMove(move);
+      this.closeModal();
     }
-    this.closeModal();
   }
 
   closeModal() {
-    this.view.dismiss();
+    this.viewCtrl.dismiss({ edited: false });
   }
+
 
 }

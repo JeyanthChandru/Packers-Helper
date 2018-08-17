@@ -3,26 +3,27 @@ import { IonicPage, NavController, NavParams, ModalController, ActionSheetContro
 import { BoxDetailsProvider } from '../../providers/box-details/box-details';
 import { Box } from '../../models/box-model/box.model';
 import { Printer, PrintOptions } from '../../../node_modules/@ionic-native/printer';
-import { Move } from '../../models/new-move/new-move.model';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { SharedMove } from '../../models/new-shared-move/new-shared-move.model';
 
 @IonicPage()
 @Component({
-  selector: 'page-open-move',
-  templateUrl: 'open-move.html',
+  selector: 'page-open-shared-move',
+  templateUrl: 'open-shared-move.html',
 })
-export class OpenMovePage {
-  private box: Box[]
-  private move: Move
-  constructor(
-    public navCtrl: NavController,
+export class OpenSharedMovePage {
+  private box: Box[] = [];
+  private sharedMove: SharedMove;
+  private sharedKey: string;
+  constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private boxDetails: BoxDetailsProvider,
     private modalCtrl: ModalController,
     private printer: Printer,
     private actionSheetCtrl: ActionSheetController,
     private authService: AuthServiceProvider) {
-    this.move = this.navParams.data;
+    this.sharedMove = this.navParams.get('sharedMove');
+    this.sharedKey = this.navParams.get('sharedKey');
   }
 
   ngOnInit() {
@@ -30,14 +31,14 @@ export class OpenMovePage {
       this.navCtrl.setRoot('LoginPage');
     }
     else {
-      this.boxDetails.getBoxDetails(this.authService.getUID().uid, this.move.$key).subscribe(data => {
+      this.boxDetails.getSharedBoxDetails(this.sharedKey, this.sharedMove.$key).subscribe(data => {
         this.box = data;
       });
     }
   }
 
   addNewBox() {
-    let modal = this.modalCtrl.create('NewBoxPage');
+    let modal = this.modalCtrl.create('NewBoxPage', { isSharedBox: true });
     modal.present();
   }
 
@@ -61,7 +62,7 @@ export class OpenMovePage {
   }
 
   openBoxPage(b: Box) {
-    this.navCtrl.push('OpenBoxPage', { box: b });
+    this.navCtrl.push('OpenBoxPage', b);
   }
 
   openActionSheet(b: Box) {
@@ -77,7 +78,7 @@ export class OpenMovePage {
         , {
           text: 'Edit',
           handler: () => {
-            this.navCtrl.push('NewBoxPage', { box: b });
+            this.navCtrl.push('NewBoxPage', { sharedBox: b });
           }
         }
         , {
