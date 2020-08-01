@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Users } from 'src/app/models/users/users.model';
 import { NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,16 +12,14 @@ import { AuthService } from 'src/app/service/auth.service';
 export class LoginPage implements OnInit {
 
   user = {} as Users;
-  constructor(public navCtrl: NavController, 
-    private authService: AuthService,
-    private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
   }
 
   async login(user: Users) {
     try {
       const result = await this.authService.loginUser(user);
       if (result) {
-        this.router.navigate(['/home']);
+        this.router.navigate(['home']);
       }
     }
     catch (e) {
@@ -31,9 +29,8 @@ export class LoginPage implements OnInit {
   }
 
   register() {
-    this.router.navigate(['/register']);
+    this.router.navigate(['register']);
   }
-
 
   ngOnInit() {
   }

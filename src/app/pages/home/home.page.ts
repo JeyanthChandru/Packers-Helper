@@ -1,22 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SharedMove } from 'src/app/models/new-shared-move/new-shared-move.model';
+import { Move } from 'src/app/models/new-move/new-move.model';
 import { NavController, ModalController, ActionSheetController, AlertController } from '@ionic/angular';
 import { map, concatAll, mergeMap } from 'rxjs/operators';
-import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
-import { SharedMove } from 'src/app/models/shared-move/shared-move.model';
-import { Move } from 'src/app/models/move/move.model';
-import { MoveDetailsService } from 'src/app/service/move-details.service';
+import { MoveService } from 'src/app/service/move.service';
 import { AuthService } from 'src/app/service/auth.service';
-import { SharedMoveDetailsService } from 'src/app/service/shared-move-details.service';
+import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
+import { SharedMoveService } from 'src/app/service/shared-move.service';
 import { NewMovePage } from '../new-move/new-move.page';
 import { NewSharedMovePage } from '../new-shared-move/new-shared-move.page';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+
   scannedCode = null;
   sharedMove: SharedMove[] = [];
   sharedKeys: string[] = [];
@@ -30,18 +31,18 @@ export class HomePage {
   ];
   move: Move[];
   constructor(
-    public router: Router,
     private modalCtrl: ModalController,
-    private moveDetails: MoveDetailsService,
+    private moveDetails: MoveService,
     private barcodeScanner: BarcodeScanner,
     private actionSheetCtrl: ActionSheetController,
     private authService: AuthService,
     private alertCtrl: AlertController,
-    private sharedMoveDetails: SharedMoveDetailsService) {
+    private sharedMoveDetails: SharedMoveService,
+    private router: Router) {
   }
 
   async addNewMove() {
-    const alert = await this.alertCtrl.create({
+    let alert = await this.alertCtrl.create({
       header: 'Add a New Move',
       message: 'Create a move for yourself, or share it with your friends and families',
       inputs: [{
@@ -62,15 +63,11 @@ export class HomePage {
         text: 'Confirm',
         handler: async (data) => {
           if (data == 'individual_move') {
-            let modal = await this.modalCtrl.create({
-              component: NewMovePage
-            });
+            let modal = await this.modalCtrl.create({ component: NewMovePage });
             modal.present();
           }
           else {
-            let modal = await this.modalCtrl.create({
-              component: NewSharedMovePage
-            });
+            let modal = await this.modalCtrl.create({ component: NewSharedMovePage });
             modal.present();
           }
         }
@@ -81,7 +78,7 @@ export class HomePage {
 
   async ngOnInit() {
     if (this.authService.getUID() == null) {
-      this.router.navigateByUrl('login');
+      this.router.navigate(['login'])
     }
     else {
       this.moveDetails.getMoveDetails((await this.authService.getUID()).uid).pipe(
@@ -132,7 +129,7 @@ export class HomePage {
 
   logout() {
     this.authService.logoutUser();
-    this.router.navigateByUrl('login');
+    this.router.navigate(['login']);
   }
 
   scanCode() {
@@ -143,7 +140,12 @@ export class HomePage {
     this.barcodeScanner.scan(options).then(barcodeData => {
       if (barcodeData.text.indexOf('PackersHelper') >= 0) {
         let json = JSON.parse(barcodeData.text);
-        this.router.navigate(['/openbox', { name: json.name }]);
+        let navigationExtras: NavigationExtras = {
+          state: {
+            name: json.name
+          }
+        }
+        this.router.navigate(['open-box'], navigationExtras);
       }
       else {
         this.scannedCode = barcodeData.text;
@@ -154,11 +156,11 @@ export class HomePage {
   }
 
   openMovePage(m: Move) {
-    this.router.navigate(['open-move'], this.moveDetails.populateMove(m))
+    this.router.navigate(['open-move'], this.moveDetails.populateMove(m));
   }
 
   openSharedMovePage(sm: SharedMove, i) {
-    this.router.navigate(['open-shared-move'], this.moveDetails.populateSharedMove(sm, this.sharedKeys[i]))
+    this.router.navigate(['open-shared-move'], this.sharedMoveDetails.populateSharedMove(sm, this.sharedKeys[i]));
   }
 
   removeItem(key) {
@@ -183,17 +185,15 @@ export class HomePage {
         {
           text: 'Edit',
           handler: async () => {
-            let modal = await this.modalCtrl.create({
-              component: NewMovePage, componentProps: {
-                propMove: m
-              }
-            });
+            let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m } });
             const { data } = await modal.onWillDismiss();
+
             this.edited = data.edited;
             this.index = i;
             if (this.edited) {
               this.move[i].date = this.editDate(this.move[i].date);
             }
+
             modal.present();
           }
         },
@@ -227,19 +227,14 @@ export class HomePage {
           {
             text: 'Edit',
             handler: async () => {
-              let modal = await this.modalCtrl.create({
-                component: NewSharedMovePage, componentProps: {
-                  sharedMove: sm,
-                  isAdmin: isAdmin,
-                  sharedKey: this.sharedKeys[i]
-                }
-              });
+              let modal = await this.modalCtrl.create({ component: NewSharedMovePage, componentProps: { sharedMove: sm, isAdmin: isAdmin, sharedKey: this.sharedKeys[i] } });
               const { data } = await modal.onWillDismiss();
               this.edited = data.edited;
               this.index = i;
               if (this.edited) {
                 this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
               }
+
               modal.present();
             }
           },
@@ -270,19 +265,14 @@ export class HomePage {
           {
             text: 'Edit',
             handler: async () => {
-              let modal = await this.modalCtrl.create({
-                component: NewSharedMovePage, componentProps: {
-                  sharedMove: sm,
-                  isAdmin: isAdmin,
-                  sharedKey: this.sharedKeys[i]
-                }
-              });
+              let modal = await this.modalCtrl.create({ component: NewSharedMovePage, componentProps: { sharedMove: sm, isAdmin: isAdmin, sharedKey: this.sharedKeys[i] } });
               const { data } = await modal.onWillDismiss();
               this.edited = data.edited;
               this.index = i;
               if (this.edited) {
                 this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
               }
+
               modal.present();
             }
           },

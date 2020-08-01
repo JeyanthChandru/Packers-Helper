@@ -1,8 +1,7 @@
 {
-  "name": "PackersHelper",
+  "name": "Packers Helper",
   "integrations": {
-    "cordova": {}
+    "capacitor": {}
   },
-  "type": "ionic-angular",
-  "pro_id": "92667fd7"
+  "type": "angular"
 }
