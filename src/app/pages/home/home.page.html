@@ -1,0 +1,97 @@
+<ion-header>
+
+  <ion-navbar text-center color='primary'>
+    <ion-title>Dashboard</ion-title>
+    <ion-buttons end>
+      <button ion-button full clear (click)='logout()'>Logout</button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-toolbar>
+    <ion-buttons end>
+
+      <button ion-button full clear icon-left (click)="scanCode()">
+        <ion-icon name="qr-scanner"></ion-icon>Scan Code</button>
+      <button ion-button full clear (click)="addNewMove()">
+        Add
+      </button>
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-card *ngIf="scannedCode">
+    <ion-card-content>
+      Result from Scan: {{ scannedCode }}
+    </ion-card-content>
+    <span float-right ion-button icon-left clear (click)="scannedCode=''">
+      <ion-icon name="close"></ion-icon>
+      Clear
+    </span>
+  </ion-card>
+
+  <ion-list no-lines>
+    <ion-item-divider color='primary'>
+      <h3>Individual Moves</h3>
+    </ion-item-divider>
+    <ion-list-header *ngIf="move == null" text-wrap>
+      No Data Yet. Try adding a new one using the button above.
+    </ion-list-header>
+    <ion-list-header *ngIf="move != null" text-wrap>
+      Following are the list of moves, you have added. Click/Long press to view/modify their content.
+    </ion-list-header>
+    <ion-item-group>
+      <ion-item-sliding *ngFor="let m of move; index as i">
+        <ion-item (press)="openActionSheet(m, i)" (tap)="openMovePage(m)">
+          <!-- <ion-title>Trip Name: {{m.name}}</ion-title>
+        <ion-label>Date: {{m.date}}</ion-label> -->
+          <ion-card>
+            <ion-card-header>
+              Trip Name: {{m.name}}
+            </ion-card-header>
+            <ion-card-content>
+              Date: {{m.date}}
+            </ion-card-content>
+          </ion-card>
+        </ion-item>
+        <ion-item-options>
+          <button ion-button (click)="removeItem(m.$key)">
+            Delete
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-item-group>
+    <!-- <ion-fab right bottom>
+      <button ion-fab (click)="addNewMove()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-fab> -->
+  </ion-list>
+  <ion-list>
+    <ion-item-divider color='primary'>
+      <h3>Shared Moves</h3>
+    </ion-item-divider>
+    <ion-list-header *ngIf="sharedmove == null" text-wrap>
+      Create a trip that can be shared with your friends.
+    </ion-list-header>
+    <ion-list-header *ngIf="sharedmove != null" text-wrap>
+      Following are the list of shared moves, you have added. Click/Long press to view/modify their content.
+    </ion-list-header>
+    <ion-item-group *ngFor="let sm of sharedMove; index as i">
+      <ion-item (press)="openSharedActionSheet(sm, i)" (tap)="openSharedMovePage(sm, i)">
+        <!-- <ion-title>Trip Name: {{m.name}}</ion-title>
+          <ion-label>Date: {{m.date}}</ion-label> -->
+        <ion-card>
+          <ion-card-header>
+            Trip Name: {{sm.name}}
+          </ion-card-header>
+          <ion-card-content>
+            Date: {{sm.date}}
+          </ion-card-content>
+        </ion-card>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+</ion-content>

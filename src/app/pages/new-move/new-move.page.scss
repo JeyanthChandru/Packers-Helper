@@ -1,0 +1,10 @@
+page-new-move {
+    ion-input {
+        input {
+            text-align: right;
+            ::-webkit-input-placeholder {
+                text-align: right;
+            }
+        }
+    }
+}
