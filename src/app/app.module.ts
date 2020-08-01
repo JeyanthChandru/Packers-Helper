@@ -1,48 +1,52 @@
-import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { Camera } from "@ionic-native/camera";
+import { Crop } from "@ionic-native/crop";
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-
-import { AngularFireModule } from "@angular/fire";
-import { AngularFireAuthModule } from "@angular/fire/auth";
-import { AngularFireDatabaseModule } from "@angular/fire/database";
+import { MyApp } from './app.component';
+import { MoveDetailsProvider } from '../providers/move-details/move-details';
+import { BoxDetailsProvider } from '../providers/box-details/box-details';
+import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { Printer } from '../../node_modules/@ionic-native/printer';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from "angularfire2/auth";
 import { FIREBASE_CONFIG } from './app.firebase.config';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { Printer } from '@ionic-native/printer/ngx';
-import { Camera } from '@ionic-native/camera/ngx';
-import { AuthService } from './service/auth.service';
-import { BoxDetailsService } from './service/box-details.service';
-import { MoveDetailsService } from './service/move-details.service';
-import { SharedMoveDetailsService } from './service/shared-move-details.service';
+import { IonicImageViewerModule } from '../../node_modules/ionic-img-viewer';
+import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { SharedMoveDetailsProvider } from '../providers/shared-move-details/shared-move-details';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [
+    MyApp,
+  ],
   imports: [
-    BrowserModule, 
-    IonicModule.forRoot(), 
-    AppRoutingModule, 
+    BrowserModule,
+    IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(FIREBASE_CONFIG),
-    AngularFireAuthModule, 
-    AngularFireDatabaseModule],
+    AngularFireDatabaseModule,
+    IonicImageViewerModule,
+    AngularFireAuthModule
+  ],
+  bootstrap: [IonicApp],
+  entryComponents: [
+    MyApp,
+  ],
   providers: [
     StatusBar,
     SplashScreen,
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    MoveDetailsProvider,
+    BoxDetailsProvider,
     BarcodeScanner,
     Printer,
     Camera,
-    AuthService,
-    BoxDetailsService,
-    MoveDetailsService,
-    SharedMoveDetailsService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ],
-  bootstrap: [AppComponent]
+    Crop,
+    AuthServiceProvider,
+    SharedMoveDetailsProvider,
+  ]
 })
-export class AppModule {}
+export class AppModule { }
