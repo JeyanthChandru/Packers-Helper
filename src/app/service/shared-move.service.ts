@@ -4,6 +4,7 @@ import { SharedMove } from '../models/new-shared-move/new-shared-move.model';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -91,5 +92,16 @@ export class SharedMoveService {
       });
     }
     this.db.list('/shared/' + sharedKey).update(sharedMoveKey, sharedMove);
+  }
+
+  populateSharedMove(sharedMove: SharedMove, sharedKey: String) {
+    let navigationExtras : NavigationExtras = {
+      state: {
+        sharedMove: sharedMove,
+        sharedKey: sharedKey
+      }
+    }
+
+    return navigationExtras;
   }
 }

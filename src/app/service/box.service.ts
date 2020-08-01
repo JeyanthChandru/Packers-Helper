@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Box } from '../models/box-model/box.model';
 import { AngularFireList, AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
+import { NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -77,5 +78,25 @@ export class BoxService {
 
   getSharedMoveKey() {
     return this.sharedMoveKey;
+  }
+
+  populateBox(box : Box) {
+    let navigationExtras : NavigationExtras = {
+      state: {
+        box: box
+      }
+    }
+
+    return navigationExtras;
+  }
+
+  populateSharedBox(sharedBox: Box) {
+    let navigationExtras : NavigationExtras = {
+      state: {
+        sharedBox: sharedBox
+      }
+    }
+
+    return navigationExtras;
   }
 }

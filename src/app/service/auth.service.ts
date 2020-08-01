@@ -6,24 +6,24 @@ import { AngularFireAuth } from '@angular/fire/auth';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private auth: AngularFireAuth) {
+  constructor(private angularFireAuth: AngularFireAuth) {
   }
 
   getUID() {
-    return this.auth.currentUser;
+    return this.angularFireAuth.currentUser;
   }
 
   registerUser(user: Users) {
-    return this.auth.createUserWithEmailAndPassword(user.email, user.password);
+    return this.angularFireAuth.createUserWithEmailAndPassword(user.email, user.password);
   }
 
   loginUser(user: Users) {
-    return this.auth.signInWithEmailAndPassword(user.email, user.password);
+    return this.angularFireAuth.signInWithEmailAndPassword(user.email, user.password);
   }
 
   logoutUser(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.auth.signOut()
+      this.angularFireAuth.signOut()
         .then((data: any) => {
           resolve(data);
         })
@@ -34,6 +34,6 @@ export class AuthService {
   }
 
   getEmail() {
-    return this.auth.currentUser.then(userInfo => userInfo.email)
+    return this.angularFireAuth.currentUser.then(userInfo => userInfo.email)
   }
 }

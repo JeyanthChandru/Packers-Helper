@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Move } from '../models/new-move/new-move.model';
 import { AngularFireList, AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
+import { NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -33,5 +34,15 @@ export class MoveService {
 
   removeMove(key: string) {
     this.dataRef.remove(key);
+  }
+
+  populateMove(move: Move) {
+    let navigationExtras : NavigationExtras = {
+      state: {
+        move: move
+      }
+    }
+
+    return navigationExtras;
   }
 }
