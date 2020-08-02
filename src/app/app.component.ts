@@ -5,7 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { timer } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { LoggingService, Logger } from 'ionic-logging-service';
 
 @Component({
@@ -31,7 +31,12 @@ export class AppComponent {
       
       if(user && user.uid) {
         // console.log("Logged in");
-        this.router.navigate(['home']);
+        let navigationExtras : NavigationExtras = {
+          state: {
+            uid: user.uid
+          }
+        }
+        this.router.navigate(['home'], navigationExtras);
         authObserver.unsubscribe();
       } else {
         // console.log("Not Logged in")

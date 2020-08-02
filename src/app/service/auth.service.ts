@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Users } from '../models/users/users.model';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +36,15 @@ export class AuthService {
 
   getEmail() {
     return this.angularFireAuth.currentUser.then(userInfo => userInfo.email)
+  }
+
+  populateUserId(userId: String) {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        uid: userId
+      }
+    }
+
+    return navigationExtras;
   }
 }

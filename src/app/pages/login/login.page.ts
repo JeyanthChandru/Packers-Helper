@@ -18,8 +18,9 @@ export class LoginPage implements OnInit {
   async login(user: Users) {
     try {
       const result = await this.authService.loginUser(user);
+      
       if (result) {
-        this.router.navigate(['home']);
+        this.router.navigate(['home'], this.authService.populateUserId(result.user.uid));
       }
     }
     catch (e) {

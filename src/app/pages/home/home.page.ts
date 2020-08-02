@@ -9,7 +9,7 @@ import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-sca
 import { SharedMoveService } from 'src/app/service/shared-move.service';
 import { NewMovePage } from '../new-move/new-move.page';
 import { NewSharedMovePage } from '../new-shared-move/new-shared-move.page';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +30,7 @@ export class HomePage implements OnInit {
     "Oct", "Nov", "Dec"
   ];
   move: Move[];
+  uid: String = undefined;
   constructor(
     private modalCtrl: ModalController,
     private moveDetails: MoveService,
@@ -38,7 +39,13 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private alertCtrl: AlertController,
     private sharedMoveDetails: SharedMoveService,
+    private route: ActivatedRoute,
     private router: Router) {
+    this.route.queryParams.subscribe(() => {
+      if (router.getCurrentNavigation().extras.state && router.getCurrentNavigation().extras.state.uid != undefined) {
+        this.uid = router.getCurrentNavigation().extras.state.uid;
+      }
+    });
   }
 
   async addNewMove() {
@@ -77,11 +84,11 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.authService.getUID() == null) {
+    if (this.uid == undefined) {
       this.router.navigate(['login'])
     }
     else {
-      this.moveDetails.getMoveDetails((await this.authService.getUID()).uid).pipe(
+      this.moveDetails.getMoveDetails(this.uid).pipe(
         map(moves =>
           moves.map(
             move => {
@@ -128,6 +135,7 @@ export class HomePage implements OnInit {
   }
 
   logout() {
+    this.uid = undefined;
     this.authService.logoutUser();
     this.router.navigate(['login']);
   }
