@@ -10,6 +10,7 @@ import { SharedMoveService } from 'src/app/service/shared-move.service';
 import { NewMovePage } from '../new-move/new-move.page';
 import { NewSharedMovePage } from '../new-shared-move/new-shared-move.page';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -29,8 +30,11 @@ export class HomePage implements OnInit {
     "Jul", "Aug", "Sep",
     "Oct", "Nov", "Dec"
   ];
-  move: Move[];
+  move: Move[] = [];
   uid: String = undefined;
+  email: string = undefined;
+
+  private subscriptions: Subscription[] = [];
   constructor(
     private modalCtrl: ModalController,
     private moveDetails: MoveService,
@@ -41,11 +45,6 @@ export class HomePage implements OnInit {
     private sharedMoveDetails: SharedMoveService,
     private route: ActivatedRoute,
     private router: Router) {
-    this.route.queryParams.subscribe(() => {
-      if (router.getCurrentNavigation().extras.state && router.getCurrentNavigation().extras.state.uid != undefined) {
-        this.uid = router.getCurrentNavigation().extras.state.uid;
-      }
-    });
   }
 
   async addNewMove() {
@@ -70,7 +69,7 @@ export class HomePage implements OnInit {
         text: 'Confirm',
         handler: async (data) => {
           if (data == 'individual_move') {
-            let modal = await this.modalCtrl.create({ component: NewMovePage });
+            let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { uid: this.uid } });
             modal.present();
           }
           else {
@@ -83,56 +82,68 @@ export class HomePage implements OnInit {
     alert.present();
   }
 
-  async ngOnInit() {
-    if (this.uid == undefined) {
-      this.router.navigate(['login'])
-    }
-    else {
-      this.moveDetails.getMoveDetails(this.uid).pipe(
-        map(moves =>
-          moves.map(
-            move => {
-              move.date = this.editDate(move.date);
-              return move
-            }
+  ngOnInit() {
+    this.subscriptions.push(this.route.queryParams.subscribe(async () => {
+      if (this.router.getCurrentNavigation().extras.state && this.router.getCurrentNavigation().extras.state.uid != undefined) {
+        this.uid = this.router.getCurrentNavigation().extras.state.uid;
+        this.email = this.router.getCurrentNavigation().extras.state.email;
+      }
+      if (this.uid == undefined) {
+        this.router.navigate(['login'])
+      }
+      else {
+        this.subscriptions.push(this.moveDetails.getMoveDetails(this.uid).pipe(
+          map(moves =>
+            moves.map(
+              move => {
+                // move.date = this.editDate(move.date);
+                return move;
+              }
+            )
           )
-        )
-      ).subscribe(data => {
-        this.move = data;
-      });
+        ).subscribe(data => {
+          this.move = data;
+        }));
 
-      (await this.sharedMoveDetails.getAllSharedKeys()).pipe(
-        map(res => this.sharedKeys = res),
-        concatAll(),
-        mergeMap(item => this.sharedMoveDetails.getSharedMoveDetails(item).pipe(
+        this.subscriptions.push(this.sharedMoveDetails.getAllSharedKeys(this.email).pipe(
+          map(res => this.sharedKeys = res),
           concatAll(),
-          map(sm => {
-            sm.date = this.editDate(sm.date);
-            return sm
-          })
-        ))
-      ).subscribe(data => {
-        if (data != undefined) {
-          if (this.sharedMove.findIndex((sm) => sm.$key === data.$key) == -1) {
-            this.sharedMove.push(data);
+          mergeMap(item => this.sharedMoveDetails.getSharedMoveDetails(item).pipe(
+            concatAll(),
+            map(sm => {
+              // sm.date = this.editDate(sm.date);
+              return sm
+            })
+          ))
+        ).subscribe(data => {
+          if (data != undefined) {
+            if (this.sharedMove.findIndex((sm) => sm.$key === data.$key) == -1) {
+              this.sharedMove.push(data);
+            }
+            else {
+              // var index = this.sharedMove.findIndex((sm) => { return sm.$key === data.$key });
+              this.sharedMove[this.index] = data;
+            }
           }
-          else {
-            // var index = this.sharedMove.findIndex((sm) => { return sm.$key === data.$key });
-            this.sharedMove[this.index] = data;
-          }
-        }
-      });
-    }
+        }));
+      }
+    }));
+
   }
 
-  editDate(date) {
-    if (date.indexOf('-') != -1) {
-      date = date.split('-');
-      return (date[2] + ' ' + this.monthNames[Number(date[1]) - 1] + ', ' + date[0]);
-    }
-    else
-      return date
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  // editDate(date) {
+  //   console.log(date);
+  //   if (date.indexOf('-') != -1) {
+  //     date = date.split('-');
+  //     return (date[2] + ' ' + this.monthNames[Number(date[1]) - 1] + ', ' + date[0]);
+  //   }
+  //   else
+  //     return date
+  // }
 
   logout() {
     this.uid = undefined;
@@ -180,48 +191,55 @@ export class HomePage implements OnInit {
     this.sharedMoveDetails.removeMove(sm, this.sharedKeys[i]);
   }
 
-  async openActionSheet(m: Move, i) {
-    (await this.actionSheetCtrl.create({
-      header: 'Menu',
-      buttons: [
-        {
-          text: 'Open',
-          handler: () => {
-            this.openMovePage(m);
-          }
-        },
-        {
-          text: 'Edit',
-          handler: async () => {
-            let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m } });
-            const { data } = await modal.onWillDismiss();
+  async editMove(m: Move, i) {
+    const slidingItem = document.getElementById('slidingItem' + i) as any;
+    slidingItem.close();
+    let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m } });
+    modal.present();
+    const { data } = await modal.onWillDismiss();
 
-            this.edited = data.edited;
-            this.index = i;
-            if (this.edited) {
-              this.move[i].date = this.editDate(this.move[i].date);
-            }
+    this.edited = data.edited;
+    this.index = i;
+    // if (this.edited) {
+    //   this.move[i].date = this.editDate(this.move[i].date);
+    // }
 
-            modal.present();
-          }
-        },
-        {
-          text: 'Delete',
-          role: 'destructive',
-          handler: () => {
-            this.removeItem(m.$key);
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        }
-      ]
-    })).present();
+
   }
 
+  // async openActionSheet(m: Move, i) {
+  //   (await this.actionSheetCtrl.create({
+  //     header: 'Menu',
+  //     buttons: [
+  //       {
+  //         text: 'Open',
+  //         handler: () => {
+  //           this.openMovePage(m);
+  //         }
+  //       },
+  //       {
+  //         text: 'Edit',
+  //         handler: async () => {
+  //           this.editMove(m, i);
+  //         }
+  //       },
+  //       {
+  //         text: 'Delete',
+  //         role: 'destructive',
+  //         handler: () => {
+  //           this.removeItem(m.$key);
+  //         }
+  //       },
+  //       {
+  //         text: 'Cancel',
+  //         role: 'cancel',
+  //       }
+  //     ]
+  //   })).present();
+  // }
+
   async openSharedActionSheet(sm: SharedMove, i) {
-    var isAdmin: boolean = sm.admin == btoa(await this.authService.getEmail());
+    var isAdmin: boolean = sm.admin == btoa(this.email);
     if (isAdmin) {
       (await this.actionSheetCtrl.create({
         header: 'Menu',
@@ -239,9 +257,9 @@ export class HomePage implements OnInit {
               const { data } = await modal.onWillDismiss();
               this.edited = data.edited;
               this.index = i;
-              if (this.edited) {
-                this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
-              }
+              // if (this.edited) {
+              //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
+              // }
 
               modal.present();
             }
@@ -277,9 +295,9 @@ export class HomePage implements OnInit {
               const { data } = await modal.onWillDismiss();
               this.edited = data.edited;
               this.index = i;
-              if (this.edited) {
-                this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
-              }
+              // if (this.edited) {
+              //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
+              // }
 
               modal.present();
             }

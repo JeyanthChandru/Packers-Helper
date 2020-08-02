@@ -20,7 +20,7 @@ export class LoginPage implements OnInit {
       const result = await this.authService.loginUser(user);
       
       if (result) {
-        this.router.navigate(['home'], this.authService.populateUserId(result.user.uid));
+        this.router.navigate(['home'], this.authService.populateUserId(result.user.uid, result.user.email));
       }
     }
     catch (e) {

@@ -38,10 +38,11 @@ export class AuthService {
     return this.angularFireAuth.currentUser.then(userInfo => userInfo.email)
   }
 
-  populateUserId(userId: String) {
+  populateUserId(userId: String, email: String) {
     let navigationExtras: NavigationExtras = {
       state: {
-        uid: userId
+        uid: userId,
+        email: email
       }
     }
 

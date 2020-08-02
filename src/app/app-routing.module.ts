@@ -27,6 +27,10 @@ const routes: Routes = [
     path: 'new-shared-move',
     loadChildren: () => import('./pages/new-shared-move/new-shared-move.module').then( m => m.NewSharedMovePageModule)
   },
+  {
+    path: 'open-move',
+    loadChildren: () => import('./pages/open-move/open-move.module').then( m => m.OpenMovePageModule)
+  },
 ];
 
 @NgModule({

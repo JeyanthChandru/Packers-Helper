@@ -17,7 +17,11 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, AngularFireModule.initializeApp(FIREBASE_CONFIG),],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule, 
+    AngularFireModule.initializeApp(FIREBASE_CONFIG),],
   providers: [
     StatusBar,
     SplashScreen,

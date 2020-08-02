@@ -14,7 +14,7 @@ import { LoggingService, Logger } from 'ionic-logging-service';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
-  private logger : Logger;
+  private logger: Logger;
   showSplash = true;
   constructor(
     private platform: Platform,
@@ -27,13 +27,14 @@ export class AppComponent {
 
     this.logger = loggingService.getLogger("PackersHelper.AppComponent");
 
-    const authObserver = angularFireAuth.authState.subscribe(user => {
-      
-      if(user && user.uid) {
+    const authObserver = this.angularFireAuth.authState.subscribe(user => {
+
+      if (user && user.uid) {
         // console.log("Logged in");
-        let navigationExtras : NavigationExtras = {
+        let navigationExtras: NavigationExtras = {
           state: {
-            uid: user.uid
+            uid: user.uid,
+            email: user.email
           }
         }
         this.router.navigate(['home'], navigationExtras);
@@ -47,7 +48,7 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      timer(3000).subscribe(() => this.showSplash = false)
+      timer(1500).subscribe(() => this.showSplash = false);
     });
   }
 }

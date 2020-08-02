@@ -28,7 +28,8 @@ export class MoveService {
     this.dataRef.update(key, data);
   }
 
-  addMove(move: Move) {
+  addMove(move: Move, userid: String) {
+    this.dataRef = this.db.list<Move>(userid + '/move');
     this.dataRef.push(move);
   }
 

@@ -15,8 +15,8 @@ export class SharedMoveService {
   constructor(private db: AngularFireDatabase, private authService: AuthService) {
   }
 
-  async getAllSharedKeys() {
-    this.sharedKeys = this.db.list<string>('users/' + btoa(await this.authService.getEmail())).snapshotChanges().pipe(
+  getAllSharedKeys(email: string) {
+    this.sharedKeys = this.db.list<string>('users/' + btoa(email)).snapshotChanges().pipe(
       map(changes =>
         changes.map(c => (c.payload.val()))
       )
