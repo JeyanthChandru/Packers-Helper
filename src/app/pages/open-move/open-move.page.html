@@ -1,9 +1,42 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>open-move</ion-title>
+  <ion-toolbar *ngIf="move != null">
+    <ion-buttons slot="start">
+      <ion-back-button text="" defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{move.name}}</ion-title>
+    <ion-buttons *ngIf="box && box.length != 0" slot="primary">
+      <ion-button (click)='printContent()'>
+        <ion-icon slot="icon-only" name="print-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <ion-list>
+    <ion-grid id='allBox' hidden>
+      <ion-row>
+        <ion-col col-3 *ngFor='let b of box'>
+          <img src="{{b.qr}}" />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <section *ngFor="let b of box">
+      <ion-card (press)="openActionSheet(b)" (tap)="openBoxPage(b)">
+        <img src="{{b.image}}" *ngIf="b.image != undefined" />
+        <img src="../../../assets/imgs/icon.png" *ngIf="b.image == undefined" />
+        <ion-card-header text-center>
+          {{b.name}}
+        </ion-card-header>
+      </ion-card>
+    </section>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button size="small" (click)="addNewBox()">
+      <ion-icon name="add-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
 </ion-content>

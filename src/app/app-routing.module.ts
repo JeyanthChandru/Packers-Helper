@@ -31,6 +31,10 @@ const routes: Routes = [
     path: 'open-move',
     loadChildren: () => import('./pages/open-move/open-move.module').then( m => m.OpenMovePageModule)
   },
+  {
+    path: 'new-box',
+    loadChildren: () => import('./pages/new-box/new-box.module').then( m => m.NewBoxPageModule)
+  },
 ];
 
 @NgModule({

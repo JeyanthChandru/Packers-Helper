@@ -15,7 +15,7 @@ import { LoggingService, Logger } from 'ionic-logging-service';
 })
 export class AppComponent {
   private logger: Logger;
-  showSplash = true;
+  // showSplash = true;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -48,7 +48,7 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      timer(1500).subscribe(() => this.showSplash = false);
+      // timer(1500).subscribe(() => this.showSplash = false);
     });
   }
 }

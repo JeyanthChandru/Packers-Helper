@@ -37,10 +37,12 @@ export class MoveService {
     this.dataRef.remove(key);
   }
 
-  populateMove(move: Move) {
-    let navigationExtras : NavigationExtras = {
+  populateMove(move: Move, uid: String, email: String) {
+    let navigationExtras: NavigationExtras = {
       state: {
-        move: move
+        move: move,
+        uid: uid,
+        email: email
       }
     }
 

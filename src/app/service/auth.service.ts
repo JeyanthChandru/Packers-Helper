@@ -10,9 +10,9 @@ export class AuthService {
   constructor(private angularFireAuth: AngularFireAuth) {
   }
 
-  getUID() {
-    return this.angularFireAuth.currentUser;
-  }
+  // getUID() {
+  //   return this.angularFireAuth.currentUser;
+  // }
 
   registerUser(user: Users) {
     return this.angularFireAuth.createUserWithEmailAndPassword(user.email, user.password);

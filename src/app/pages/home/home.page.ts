@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
         this.email = this.router.getCurrentNavigation().extras.state.email;
       }
       if (this.uid == undefined) {
-        this.router.navigate(['login'])
+        this.router.navigate(['/login'])
       }
       else {
         this.subscriptions.push(this.moveDetails.getMoveDetails(this.uid).pipe(
@@ -164,7 +164,7 @@ export class HomePage implements OnInit {
             name: json.name
           }
         }
-        this.router.navigate(['open-box'], navigationExtras);
+        this.router.navigate(['/open-box'], navigationExtras);
       }
       else {
         this.scannedCode = barcodeData.text;
@@ -175,11 +175,11 @@ export class HomePage implements OnInit {
   }
 
   openMovePage(m: Move) {
-    this.router.navigate(['open-move'], this.moveDetails.populateMove(m));
+    this.router.navigate(['/open-move'], this.moveDetails.populateMove(m, this.uid, this.email));
   }
 
   openSharedMovePage(sm: SharedMove, i) {
-    this.router.navigate(['open-shared-move'], this.sharedMoveDetails.populateSharedMove(sm, this.sharedKeys[i]));
+    this.router.navigate(['/open-shared-move'], this.sharedMoveDetails.populateSharedMove(sm, this.sharedKeys[i]));
   }
 
   removeItem(key) {

@@ -1,13 +1,6 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Individual Move</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="closeModal()" fill="clear" color="dark">
-        <!-- <span ion-text color="light" hideWhen="android,windows">CLOSE</span>
-        <ion-icon name="md-close" showWhen="android,windows"></ion-icon> -->
-        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -21,15 +14,22 @@
       <ion-label position="floating">MM DD, YYYY</ion-label>
       <ion-datetime displayFormat="MMM DD, YYYY" [min]="minDate" [max]="maxDate" formControlName="date"></ion-datetime>
     </ion-item>
-
-
   </form>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar>
-    <ion-title slot="primary">
-      <ion-button full clear [disabled]="!form.valid" (click)="addNew()">SAVE</ion-button>
-    </ion-title>
+    <ion-buttons>
+      <ion-button (click)="closeModal()" fill="clear" color="dark">
+        <!-- <span ion-text color="light" hideWhen="android,windows">CLOSE</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon> -->
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button full clear [disabled]="!form.valid" (click)="addNew()">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-footer>

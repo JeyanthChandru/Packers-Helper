@@ -13,14 +13,18 @@ import { AngularFireModule } from '@angular/fire';
 import { FIREBASE_CONFIG } from './app.firebase.config';
 import { LoggingServiceModule } from 'ionic-logging-service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { Printer } from '@ionic-native/printer/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
-    BrowserModule, 
-    IonicModule.forRoot(), 
-    AppRoutingModule, 
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
     AngularFireModule.initializeApp(FIREBASE_CONFIG),],
   providers: [
     StatusBar,
@@ -28,6 +32,10 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     AngularFireAuthModule,
     LoggingServiceModule,
     BarcodeScanner,
+    Printer,
+    Camera,
+    NgxIonicImageViewerModule,
+    QRCodeModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
