@@ -1,9 +1,8 @@
 <ion-header>
   <ion-toolbar *ngIf="move != null">
     <ion-buttons slot="start">
-      <ion-back-button text="" defaultHref="/home"></ion-back-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{move.name}}</ion-title>
     <ion-buttons *ngIf="box && box.length != 0" slot="primary">
       <ion-button (click)='printContent()'>
         <ion-icon slot="icon-only" name="print-outline"></ion-icon>
@@ -17,18 +16,20 @@
   <ion-list>
     <ion-grid id='allBox' hidden>
       <ion-row>
-        <ion-col col-3 *ngFor='let b of box'>
-          <img src="{{b.qr}}" />
+        <ion-col col-3 *ngFor='let box of boxes'>
+          <img src="{{box.qr}}" />
         </ion-col>
       </ion-row>
     </ion-grid>
-    <section *ngFor="let b of box">
-      <ion-card (press)="openActionSheet(b)" (tap)="openBoxPage(b)">
-        <img src="{{b.image}}" *ngIf="b.image != undefined" />
-        <img src="../../../assets/imgs/icon.png" *ngIf="b.image == undefined" />
-        <ion-card-header text-center>
-          {{b.name}}
+    <section *ngFor="let box of boxes; let i = index">
+      <ion-card (click)="openActionSheet(box, i)">
+        <ion-card-header>
+          <ion-card-title>{{box.name}}</ion-card-title>
+          <ion-card-subtitle *ngIf="box.content.length==1">{{box.content.length}} item</ion-card-subtitle>
+          <ion-card-subtitle *ngIf="box.content.length>1">{{box.content.length}} items</ion-card-subtitle>
         </ion-card-header>
+        <img width="100%" src="{{box.image}}" *ngIf="box.image != undefined" />
+        <img width="100%" src="../../../assets/imgs/icon.png" *ngIf="box.image == undefined" />
       </ion-card>
     </section>
   </ion-list>

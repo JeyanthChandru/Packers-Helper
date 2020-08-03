@@ -4,6 +4,7 @@ import { Box } from '../models/box-model/box.model';
 import { AngularFireList, AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
 import { NavigationExtras } from '@angular/router';
+import { Move } from '../models/new-move/new-move.model';
 
 @Injectable({
   providedIn: 'root'
@@ -80,10 +81,11 @@ export class BoxService {
     return this.sharedMoveKey;
   }
 
-  populateBox(box : Box) {
+  populateBox(box : Box, move: Move) {
     let navigationExtras : NavigationExtras = {
       state: {
-        box: box
+        box: box,
+        move: move
       }
     }
 

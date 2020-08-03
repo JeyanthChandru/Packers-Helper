@@ -4,7 +4,6 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { timer } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
 import { LoggingService, Logger } from 'ionic-logging-service';
 
@@ -22,7 +21,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     private angularFireAuth: AngularFireAuth,
     private router: Router,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {
 
     this.logger = loggingService.getLogger("PackersHelper.AppComponent");
@@ -48,7 +47,20 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      // this.presentLoading();
       // timer(1500).subscribe(() => this.showSplash = false);
     });
   }
+
+  // async presentLoading() {
+  //   const loading = await this.loadingController.create({
+  //     cssClass: 'my-custom-class',
+  //     message: 'Setting up the App...',
+  //     duration: 2000
+  //   });
+  //   loading.present();
+  //   loading.onDidDismiss().then(() => {
+
+  //   });
+  // }
 }

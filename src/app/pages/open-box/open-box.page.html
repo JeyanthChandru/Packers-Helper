@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)='printQR()'>
+        <ion-icon slot="icon-only" name="print-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button size="small" (click)="editBox(box)">
+      <ion-icon name="pencil-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-card class="ion-activatable ripple-parent">
+    <ion-card-header>
+      <ion-card-title>
+        {{box.name}}
+      </ion-card-title>
+      <ion-card-subtitle>
+        {{move.name}}
+      </ion-card-subtitle>
+      <ion-card-subtitle>
+        {{move.date | date:'longDate'}}
+      </ion-card-subtitle>
+    </ion-card-header>
+    <img width="100%" src='../../../assets/imgs/icon.png' *ngIf="box.image == undefined" />
+    <img width="100%" src='{{box.image}}' *ngIf='box.image != undefined' />
+    <ion-card-content>
+      <ion-item-group>
+        <ion-item lines="none" *ngFor="let c of box.content">
+          <ion-label>{{c.name}}</ion-label>{{c.quantity}}
+        </ion-item>
+      </ion-item-group>
+
+      <div id="oneBox" hidden>
+        <img src="{{box.qr}}" />
+      </div>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card>
+
+</ion-content>

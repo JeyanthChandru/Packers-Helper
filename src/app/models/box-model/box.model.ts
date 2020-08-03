@@ -1,8 +1,8 @@
 export interface Box{
     $key?: string,
-    name: string,
-    content: Array<Content>,
-    qr: string,
+    name?: string,
+    content?: Array<Content>,
+    qr?: string,
     image?: string,
 }
 

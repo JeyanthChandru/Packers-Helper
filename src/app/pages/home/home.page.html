@@ -1,7 +1,7 @@
 <ion-header translucent>
   <ion-toolbar>
-    <ion-title>Dashboard</ion-title>
-    <ion-buttons slot="primary">
+    <!-- <ion-title>Dashboard</ion-title> -->
+    <ion-buttons slot="end">
       <!-- <ion-button full clear (click)='logout()'>Logout</ion-button> -->
       <ion-button (click)='logout()'>
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
@@ -30,14 +30,15 @@
     </ion-item>
     <ion-item-group>
       <ion-item-sliding *ngFor="let m of move; index as i" [id]="'slidingItem' + i">
-        <ion-item (click)="openMovePage(m)">
+        <ion-item (click)="openMovePage(m)" detail>
           <!-- <ion-title>Trip Name: {{m.name}}</ion-title>
         <ion-label>Date: {{m.date}}</ion-label> -->
-          <ion-card class="ion-activatable ripple-parent">
-            <ion-card-header>Trip Name: {{m.name}}</ion-card-header>
+          <!-- <ion-card class="ion-activatable ripple-parent">
+            <ion-card-subtitle>{{m.name}}</ion-card-subtitle>
             <ion-card-content>{{m.date | date:'longDate'}}</ion-card-content>
             <ion-ripple-effect></ion-ripple-effect>
-          </ion-card>
+          </ion-card> -->
+          <ion-label>{{m.name}}</ion-label>{{m.date | date:'mediumDate'}}
         </ion-item>
         <ion-item-options side="end">
           <ion-item-option (click)="editMove(m, i)">

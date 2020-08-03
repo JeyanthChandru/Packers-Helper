@@ -15,7 +15,6 @@ import { LoggingServiceModule } from 'ionic-logging-service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Printer } from '@ionic-native/printer/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
-import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
@@ -34,7 +33,6 @@ import { QRCodeModule } from 'angularx-qrcode';
     BarcodeScanner,
     Printer,
     Camera,
-    NgxIonicImageViewerModule,
     QRCodeModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

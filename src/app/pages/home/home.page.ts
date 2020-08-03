@@ -70,16 +70,16 @@ export class HomePage implements OnInit {
         handler: async (data) => {
           if (data == 'individual_move') {
             let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { uid: this.uid } });
-            modal.present();
+            await modal.present();
           }
           else {
             let modal = await this.modalCtrl.create({ component: NewSharedMovePage });
-            modal.present();
+            await modal.present();
           }
         }
       }]
     });
-    alert.present();
+    await alert.present();
   }
 
   ngOnInit() {
@@ -195,7 +195,7 @@ export class HomePage implements OnInit {
     const slidingItem = document.getElementById('slidingItem' + i) as any;
     slidingItem.close();
     let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m } });
-    modal.present();
+    await modal.present();
     const { data } = await modal.onWillDismiss();
 
     this.edited = data.edited;
@@ -241,8 +241,7 @@ export class HomePage implements OnInit {
   async openSharedActionSheet(sm: SharedMove, i) {
     var isAdmin: boolean = sm.admin == btoa(this.email);
     if (isAdmin) {
-      (await this.actionSheetCtrl.create({
-        header: 'Menu',
+      await (await this.actionSheetCtrl.create({
         buttons: [
           {
             text: 'Open',
@@ -261,7 +260,7 @@ export class HomePage implements OnInit {
               //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
               // }
 
-              modal.present();
+              await modal.present();
             }
           },
           {
@@ -279,8 +278,7 @@ export class HomePage implements OnInit {
       })).present();
     }
     else {
-      (await this.actionSheetCtrl.create({
-        header: 'Menu',
+      await (await this.actionSheetCtrl.create({
         buttons: [
           {
             text: 'Open',
@@ -299,7 +297,7 @@ export class HomePage implements OnInit {
               //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
               // }
 
-              modal.present();
+              await modal.present();
             }
           },
           {

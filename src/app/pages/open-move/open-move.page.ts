@@ -16,7 +16,7 @@ import { NewBoxPage } from '../new-box/new-box.page';
 })
 export class OpenMovePage implements OnInit {
 
-  private box: Box[];
+  private boxes: Box[];
   private move: Move;
   private uid;
   private email;
@@ -43,7 +43,7 @@ export class OpenMovePage implements OnInit {
       }
       else {
         this.subscriptions.push(this.boxDetails.getBoxDetails(this.uid, this.move.$key).subscribe(data => {
-          this.box = data;
+          this.boxes = data;
         }));
       }
     }));
@@ -73,31 +73,36 @@ export class OpenMovePage implements OnInit {
     });
   }
 
-  openBoxPage(b: Box) {
-    this.router.navigate(['open-box'], this.boxDetails.populateBox(b));
+  openBoxPage(box: Box) {
+    this.router.navigate(['open-box'], this.boxDetails.populateBox(box, this.move));
   }
 
-  async openActionSheet(b: Box) {
+  async openActionSheet(box: Box, i: number) {
     (await this.actionSheetCtrl.create({
-      header: 'Menu',
       buttons: [
         {
           text: 'Open',
           handler: () => {
-            this.openBoxPage(b);
+            this.openBoxPage(box);
           }
         },
         {
           text: 'Edit',
-          handler: () => {
-            this.router.navigate(['new-box-page'], this.boxDetails.populateBox(b));
+          handler: async () => {
+            let modal = await this.modalCtrl.create({ component: NewBoxPage, componentProps: { box: box } });
+            modal.present();
+            const { data } = await modal.onWillDismiss();
+            if (data.isEdited) {
+              this.boxes[i] = data.box;
+            }
+            // this.router.navigate(['new-box'], this.boxDetails.populateBox(b));
           }
         },
         {
           text: 'Delete',
           role: 'destructive',
           handler: () => {
-            this.boxDetails.removeBox(b.$key);
+            this.boxDetails.removeBox(box.$key);
           }
         },
         {

@@ -16,7 +16,7 @@
 @import "~@ionic/angular/css/normalize.css";
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
+@import "~@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "~@ionic/angular/css/padding.css";
@@ -47,28 +47,34 @@
 
 @-webkit-keyframes sk-rotateplane {
     0% {
-        -webkit-transform: perspective(120px)
+        -webkit-transform: perspective(120px);
     }
     50% {
-        -webkit-transform: perspective(120px) rotateY(180deg)
+        -webkit-transform: perspective(120px) rotateY(180deg);
     }
     100% {
-        -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg)
+        -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg);
     }
 }
 
 @keyframes sk-rotateplane {
     0% {
         transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+        -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
     }
     50% {
         transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-        -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+        -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
     }
     100% {
         transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
         -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-     }
+    }
+}
 
-     }
+.my-custom-class {
+    --background: #222;
+    --spinner-color: #fff;
+
+    color: #fff;
+}

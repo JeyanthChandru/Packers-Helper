@@ -9,8 +9,6 @@ import { NewBoxPageRoutingModule } from './new-box-routing.module';
 import { NewBoxPage } from './new-box.page';
 
 import { QRCodeModule } from "angularx-qrcode";
-import { NgxIonicImageViewerModule } from "ngx-ionic-image-viewer";
-
 
 
 @NgModule({
@@ -20,8 +18,7 @@ import { NgxIonicImageViewerModule } from "ngx-ionic-image-viewer";
     ReactiveFormsModule,
     IonicModule,
     NewBoxPageRoutingModule,
-    QRCodeModule,
-    NgxIonicImageViewerModule,
+    QRCodeModule
   ],
   declarations: [NewBoxPage]
 })

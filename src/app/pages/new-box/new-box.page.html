@@ -9,25 +9,53 @@
   <!-- <img id="QR_Canvas_replica" src="{{picture}}" *ngIf="picture!=null"> -->
   <ion-card *ngIf="createdCode">
     <!-- <ngx-qrcode id="QR_Canvas" [qrc-element-type]="canvas" [qrc-value]="createdCode"></ngx-qrcode> -->
-    <qrcode id="QR_Canvas" [qrdata]="createdCode" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'img'"></qrcode>
+    <qrcode id="QR_Canvas" [qrdata]="createdCode" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'img'">
+    </qrcode>
   </ion-card>
 
-
-
-  <ion-item lines="none">
+  <ion-card>
+    <img width="100%" src='{{photoURL}}' *ngIf="box.image == undefined || photoRemoved == true" />
+    <img width="100%" src='{{box.image}}' *ngIf='box.image != undefined && photoRemoved == false' />
     <ion-fab vertical="bottom" horizontal="end">
       <ion-fab-button size="small" (click)="presentActionSheet()">
         <ion-icon name="camera"></ion-icon>
       </ion-fab-button>
     </ion-fab>
-    <ion-img-viewer scheme="dark" src='{{photoURL}}' *ngIf="box.image == undefined || photoRemoved == true">
+  </ion-card>
+
+
+  <!-- <ion-card>
+    <ion-card-header>
+      <ion-img-viewer width="100%" scheme="dark" src='{{photoURL}}'
+        *ngIf="box.image == undefined || photoRemoved == true">
+      </ion-img-viewer>
+      <ion-img-viewer width="100%" scheme="dark" src='{{box.image}}'
+        *ngIf='box.image != undefined && photoRemoved == false'>
+      </ion-img-viewer>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-fab vertical="bottom" horizontal="end">
+        <ion-fab-button size="small" (click)="presentActionSheet()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-card-content>
+  </ion-card> -->
+  <!-- <ion-item lines="none">
+    <ion-fab vertical="bottom" horizontal="end">
+      <ion-fab-button size="small" (click)="presentActionSheet()">
+        <ion-icon name="camera"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-img-viewer width="100%" scheme="dark" src='{{photoURL}}'
+      *ngIf="box.image == undefined || photoRemoved == true">
     </ion-img-viewer>
-    <ion-img-viewer title="Demo" text="Component" scheme="dark" src='{{box.image}}'
+    <ion-img-viewer width="100%" scheme="dark" src='{{box.image}}'
       *ngIf='box.image != undefined && photoRemoved == false'>
-    </ion-img-viewer>
-    <!-- <img src='{{photoURL}}' *ngIf="box.image == undefined || photoRemoved == true" imageViewer />
+    </ion-img-viewer> -->
+  <!-- <img src='{{photoURL}}' *ngIf="box.image == undefined || photoRemoved == true" imageViewer />
     <img src='{{box.image}}' *ngIf='box.image != undefined && photoRemoved == false' imageViewer /> -->
-  </ion-item>
+  <!-- </ion-item> -->
 
   <form [formGroup]="form">
     <ion-list>
@@ -38,15 +66,15 @@
 
       <div formArrayName="content">
         <section [formGroupName]="i" *ngFor="let tech of form.controls.content.controls; let i = index">
-          <ion-item-group>
-            <ion-row>
-              <ion-col size="8">
+          <ion-item-group class="ion-no-padding">
+            <ion-row class="ion-no-padding">
+              <ion-col size="7" class="ion-no-padding">
                 <ion-item>
                   <ion-label position="floating">Item {{i + 1}}</ion-label>
                   <ion-input type="text" maxlength="50" formControlName="name"></ion-input>
                 </ion-item>
               </ion-col>
-              <ion-col>
+              <ion-col class="ion-no-padding">
                 <ion-item>
                   <ion-label position="floating">Count</ion-label>
                   <ion-input type="number" maxlength="3" formControlName="quantity"></ion-input>
@@ -73,7 +101,7 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons>
-      <ion-button size="large" (click)="closeModal()" fill="clear" color="dark">
+      <ion-button size="large" (click)="closeModal({isEdited : false})" fill="clear" color="dark">
         <!-- <span ion-text color="light" hideWhen="android,windows">CLOSE</span>
         <ion-icon name="md-close" showWhen="android,windows"></ion-icon> -->
         <ion-icon slot="icon-only" name="close-outline"></ion-icon>

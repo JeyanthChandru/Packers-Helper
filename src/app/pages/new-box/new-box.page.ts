@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Box } from 'src/app/models/box-model/box.model';
 import { NavParams, ActionSheetController, ModalController } from '@ionic/angular';
@@ -12,11 +12,13 @@ import { BoxService } from 'src/app/service/box.service';
 })
 export class NewBoxPage implements OnInit {
 
+  @Input() box: Box;
+  @Input() sharedBox: Box;
+
   createdCode = null;
   photoURL: string = "../../../assets/imgs/icon.png";
 
   public form: FormGroup;
-  private box: Box;
   private photoRemoved: boolean;
 
   constructor(
@@ -34,28 +36,29 @@ export class NewBoxPage implements OnInit {
       ])
     });
 
-    if (this.navParams.get('box') != undefined) {
-      this.box = this.navParams.get('box');
+  }
+  ngOnInit(): void {
+    if (this.box != undefined) {
       this.form.controls.name.patchValue(this.box.name);
       this.box.content.forEach(element => {
         this.addValuesToInputField(element.name, element.quantity);
       });
       this.removeInputField(0);
     }
-    else if (this.navParams.get('sharedBox') != undefined) {
-      this.box = this.navParams.get('sharedBox');
-      this.form.controls.name.patchValue(this.box.name);
-      this.box.content.forEach(element => {
-        this.addValuesToInputField(element.name, element.quantity);
-      });
-      this.removeInputField(0);
-    }
+    // else if (this.navParams.data.sharedBox != undefined) {
+    //   this.box = this.navParams.data.sharedBox;
+    //   this.form.controls.name.patchValue(this.box.name);
+    //   this.box.content.forEach(element => {
+    //     this.addValuesToInputField(element.name, element.quantity);
+    //   });
+    //   this.removeInputField(0);
+    // }
     else {
       this.box = { $key: undefined, name: undefined, qr: undefined, image: undefined, content: [{ name: undefined, quantity: undefined }] }
     }
 
-  }
-  ngOnInit(): void {
+    // console.log(this.box.image);
+    // console.log(this.photoRemoved)
   }
 
   initContentFields(): FormGroup {
@@ -118,40 +121,48 @@ export class NewBoxPage implements OnInit {
     }
   }
 
+  openImage(url: string) {
+    // this.photoViewer.show(url);
+  }
+
   async presentActionSheet() {
-    let actionSheet = await this.actionSheetCtrl.create({
-      subHeader: 'Menu',
-      buttons: [
-        {
-          text: 'Take Picture',
-          handler: () => {
-            this.takePicture();
-          }
-        },
-        {
-          text: 'Import from Gallery',
-          handler: () => {
-            this.importPicture();
-          }
-        },
-        {
-          text: 'Remove Picture',
-          role: 'destructive',
-          handler: () => {
-            this.photoRemoved = true;
-            this.photoURL = "../../../assets/imgs/icon.png";
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-          }
+    let buttons = [
+      {
+        text: 'Take Picture',
+        handler: () => {
+          this.takePicture();
         }
-      ]
+      },
+      {
+        text: 'Import from Gallery',
+        handler: () => {
+          this.importPicture();
+        }
+      },
+      {
+        text: 'Remove Picture',
+        role: 'destructive',
+        handler: () => {
+          this.photoRemoved = true;
+          this.photoURL = "../../../assets/imgs/icon.png";
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+        }
+      }
+    ];
+    if (((this.box.image == undefined && this.photoURL === '../../../assets/imgs/icon.png') || this.photoRemoved) && buttons.length === 4) {
+      buttons.splice(2, 1);
+    }
+
+    let actionSheet = await this.actionSheetCtrl.create({
+      buttons: buttons
     });
 
-    actionSheet.present();
+    await actionSheet.present();
   }
 
   addNewInputField(): void {
@@ -169,44 +180,59 @@ export class NewBoxPage implements OnInit {
     control.removeAt(i);
   }
 
-  manage(val: Box): void {
+  manage(box: Box): void {
     if (this.photoURL != "../../../assets/imgs/icon.png") {
-      val.image = this.photoURL
+      box.image = this.photoURL
     }
-    if (this.navParams.get('box') != undefined) {
+    if (this.navParams.data.box != undefined) {
       this.createdCode = JSON.stringify({
         appname: 'PackersHelper',
         move: this.boxDetails.getMoveKey(),
         box: this.box.$key
       });
       setTimeout(() => {
-        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-        if (this.photoURL == "../../../assets/imgs/icon.png") {
-          this.boxDetails.addBoxToDB(this.box.$key, val);
+        var extraParams;
+        box.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        // console.log("Params: ", box);
+        // console.log("Actual: ", this.box);
+        if (box === this.box) {
+          // console.log("Add Path");
+          extraParams = { isEdited: false };
         }
-        else {
-          this.boxDetails.updateBox(this.box.$key, val);
+        else if (this.box.$key !== undefined) {
+          // console.log("Edit Path");
+          this.boxDetails.updateBox(this.box.$key, box);
+          extraParams = { isEdited: true, box: box };
+        } else {
+          this.boxDetails.addBoxToDB(this.box.$key, box);
+          extraParams = { isEdited: false };
         }
 
-        this.closeModal();
+        this.closeModal(extraParams);
       }, 300);
     }
-    else if (this.navParams.get('sharedBox') != undefined) {
+    else if (this.navParams.data.sharedBox != undefined) {
       this.createdCode = JSON.stringify({
         appname: 'PackersHelper',
         move: this.boxDetails.getSharedMoveKey(),
         box: this.box.$key
       });
       setTimeout(() => {
-        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-        if (this.photoURL == "../../../assets/imgs/icon.png") {
-          this.boxDetails.addSharedBoxToDB(this.box.$key, val);
+        var extraParams;
+        box.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        // console.log("Params: ", this.navParams.data.sharedBox);
+        if (box === this.box) {
+          extraParams = { isEdited: false };
         }
-        else {
-          this.boxDetails.updateBox(this.box.$key, val);
+        else if (this.box.$key !== undefined) {
+          this.boxDetails.updateBox(this.box.$key, box);
+          extraParams = { isEdited: true, sharedBox: box };
+        } else {
+          this.boxDetails.addSharedBoxToDB(this.box.$key, box);
+          extraParams = { isEdited: false };
         }
 
-        this.closeModal();
+        this.closeModal(extraParams);
       }, 300);
     }
     else if (this.navParams.get('isSharedBox') != undefined) {
@@ -217,9 +243,9 @@ export class NewBoxPage implements OnInit {
         box: key,
       });
       setTimeout(() => {
-        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-        this.boxDetails.addSharedBoxToDB(key, val);
-        this.closeModal();
+        box.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        this.boxDetails.addSharedBoxToDB(key, box);
+        this.modalController.dismiss();
       }, 300);
     }
     else {
@@ -230,15 +256,16 @@ export class NewBoxPage implements OnInit {
         box: key,
       });
       setTimeout(() => {
-        val.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
-        this.boxDetails.addBoxToDB(key, val);
-        this.closeModal();
+        box.qr = document.getElementById("QR_Canvas").firstElementChild.firstElementChild.getAttribute('src');
+        this.boxDetails.addBoxToDB(key, box);
+        this.modalController.dismiss();
       }, 300);
     }
   }
 
-  closeModal() {
-    this.modalController.dismiss();
+  closeModal(extraParams) {
+    // console.log(extraParams);
+    this.modalController.dismiss(extraParams);
   }
 
 }
