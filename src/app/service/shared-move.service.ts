@@ -94,10 +94,12 @@ export class SharedMoveService {
     this.db.list('/shared/' + sharedKey).update(sharedMoveKey, sharedMove);
   }
 
-  populateSharedMove(sharedMove: SharedMove, sharedKey: String) {
-    let navigationExtras : NavigationExtras = {
+  populateSharedMove(sharedMove: SharedMove, uid: string, email: string, sharedKey: string) {
+    let navigationExtras: NavigationExtras = {
       state: {
         sharedMove: sharedMove,
+        uid: uid,
+        email: email,
         sharedKey: sharedKey
       }
     }

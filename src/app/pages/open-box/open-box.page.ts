@@ -27,10 +27,13 @@ export class OpenBoxPage implements OnInit {
   }
   ngOnInit() {
     this.subscriptions.push(this.route.queryParams.subscribe(() => {
-      console.log(this.router.getCurrentNavigation().extras.state);
       if (this.router.getCurrentNavigation().extras.state && this.router.getCurrentNavigation().extras.state.box != undefined) {
         this.box = this.router.getCurrentNavigation().extras.state.box;
         this.move = this.router.getCurrentNavigation().extras.state.move;
+      } 
+      if (this.router.getCurrentNavigation().extras.state && this.router.getCurrentNavigation().extras.state.sharedBox != undefined) {
+        this.box = this.router.getCurrentNavigation().extras.state.sharedBox;
+        this.move = this.router.getCurrentNavigation().extras.state.sharedMove;
       } else {
         this.router.navigate(['login']);
       }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedMove } from 'src/app/models/new-shared-move/new-shared-move.model';
 import { Move } from 'src/app/models/new-move/new-move.model';
-import { NavController, ModalController, ActionSheetController, AlertController } from '@ionic/angular';
+import { ModalController, ActionSheetController, AlertController } from '@ionic/angular';
 import { map, concatAll, mergeMap } from 'rxjs/operators';
 import { MoveService } from 'src/app/service/move.service';
 import { AuthService } from 'src/app/service/auth.service';
@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 export class HomePage implements OnInit {
 
   scannedCode = null;
-  sharedMove: SharedMove[] = [];
+  sharedMoveList: SharedMove[] = [];
   sharedKeys: string[] = [];
   private edited: boolean = false;
   private index: number;
@@ -30,8 +30,8 @@ export class HomePage implements OnInit {
     "Jul", "Aug", "Sep",
     "Oct", "Nov", "Dec"
   ];
-  move: Move[] = [];
-  uid: String = undefined;
+  moveList: Move[] = [];
+  uid: string = undefined;
   email: string = undefined;
 
   private subscriptions: Subscription[] = [];
@@ -102,7 +102,7 @@ export class HomePage implements OnInit {
             )
           )
         ).subscribe(data => {
-          this.move = data;
+          this.moveList = data;
         }));
 
         this.subscriptions.push(this.sharedMoveDetails.getAllSharedKeys(this.email).pipe(
@@ -117,12 +117,12 @@ export class HomePage implements OnInit {
           ))
         ).subscribe(data => {
           if (data != undefined) {
-            if (this.sharedMove.findIndex((sm) => sm.$key === data.$key) == -1) {
-              this.sharedMove.push(data);
+            if (this.sharedMoveList.findIndex((sm) => sm.$key === data.$key) == -1) {
+              this.sharedMoveList.push(data);
             }
             else {
-              // var index = this.sharedMove.findIndex((sm) => { return sm.$key === data.$key });
-              this.sharedMove[this.index] = data;
+              // var index = this.sharedMoveList.findIndex((sm) => { return sm.$key === data.$key });
+              this.sharedMoveList[this.index] = data;
             }
           }
         }));
@@ -131,22 +131,9 @@ export class HomePage implements OnInit {
 
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-  // editDate(date) {
-  //   console.log(date);
-  //   if (date.indexOf('-') != -1) {
-  //     date = date.split('-');
-  //     return (date[2] + ' ' + this.monthNames[Number(date[1]) - 1] + ', ' + date[0]);
-  //   }
-  //   else
-  //     return date
-  // }
-
   logout() {
     this.uid = undefined;
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
     this.authService.logoutUser();
     this.router.navigate(['login']);
   }
@@ -179,7 +166,7 @@ export class HomePage implements OnInit {
   }
 
   openSharedMovePage(sm: SharedMove, i) {
-    this.router.navigate(['/open-shared-move'], this.sharedMoveDetails.populateSharedMove(sm, this.sharedKeys[i]));
+    this.router.navigate(['/open-shared-move'], this.sharedMoveDetails.populateSharedMove(sm, this.uid, this.email, this.sharedKeys[i]));
   }
 
   removeItem(key) {
@@ -187,126 +174,30 @@ export class HomePage implements OnInit {
   }
 
   removeSharedItem(sm: SharedMove, i: number) {
-    this.sharedMove = this.sharedMove.filter(shared => shared.$key != sm.$key);
+    this.closeSlidingItem('sharedSlidingItem', i);
+    this.sharedMoveList = this.sharedMoveList.filter(shared => shared.$key != sm.$key);
     this.sharedMoveDetails.removeMove(sm, this.sharedKeys[i]);
   }
 
-  async editMove(m: Move, i) {
-    const slidingItem = document.getElementById('slidingItem' + i) as any;
+  closeSlidingItem(elementid: string, i: number) {
+    const slidingItem = document.getElementById(elementid + i) as any;
     slidingItem.close();
-    let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m } });
-    await modal.present();
-    const { data } = await modal.onWillDismiss();
-
-    this.edited = data.edited;
-    this.index = i;
-    // if (this.edited) {
-    //   this.move[i].date = this.editDate(this.move[i].date);
-    // }
-
-
   }
 
-  // async openActionSheet(m: Move, i) {
-  //   (await this.actionSheetCtrl.create({
-  //     header: 'Menu',
-  //     buttons: [
-  //       {
-  //         text: 'Open',
-  //         handler: () => {
-  //           this.openMovePage(m);
-  //         }
-  //       },
-  //       {
-  //         text: 'Edit',
-  //         handler: async () => {
-  //           this.editMove(m, i);
-  //         }
-  //       },
-  //       {
-  //         text: 'Delete',
-  //         role: 'destructive',
-  //         handler: () => {
-  //           this.removeItem(m.$key);
-  //         }
-  //       },
-  //       {
-  //         text: 'Cancel',
-  //         role: 'cancel',
-  //       }
-  //     ]
-  //   })).present();
-  // }
+  async editMove(m: Move, i: number) {
+    this.closeSlidingItem('slidingItem', i);
+    let modal = await this.modalCtrl.create({ component: NewMovePage, componentProps: { move: m, uid: this.uid } });
+    await modal.present();
+  }
 
-  async openSharedActionSheet(sm: SharedMove, i) {
-    var isAdmin: boolean = sm.admin == btoa(this.email);
-    if (isAdmin) {
-      await (await this.actionSheetCtrl.create({
-        buttons: [
-          {
-            text: 'Open',
-            handler: () => {
-              this.openSharedMovePage(sm, i);
-            }
-          },
-          {
-            text: 'Edit',
-            handler: async () => {
-              let modal = await this.modalCtrl.create({ component: NewSharedMovePage, componentProps: { sharedMove: sm, isAdmin: isAdmin, sharedKey: this.sharedKeys[i] } });
-              const { data } = await modal.onWillDismiss();
-              this.edited = data.edited;
-              this.index = i;
-              // if (this.edited) {
-              //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
-              // }
+  isAdmin(sm: SharedMove) {
+    return sm.admin == btoa(this.email);
+  }
 
-              await modal.present();
-            }
-          },
-          {
-            text: 'Delete',
-            role: 'destructive',
-            handler: () => {
-              this.removeSharedItem(sm, i);
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel',
-          }
-        ]
-      })).present();
-    }
-    else {
-      await (await this.actionSheetCtrl.create({
-        buttons: [
-          {
-            text: 'Open',
-            handler: () => {
-              this.openSharedMovePage(sm, i);
-            }
-          },
-          {
-            text: 'Edit',
-            handler: async () => {
-              let modal = await this.modalCtrl.create({ component: NewSharedMovePage, componentProps: { sharedMove: sm, isAdmin: isAdmin, sharedKey: this.sharedKeys[i] } });
-              const { data } = await modal.onWillDismiss();
-              this.edited = data.edited;
-              this.index = i;
-              // if (this.edited) {
-              //   this.sharedMove[i].date = this.editDate(this.sharedMove[i].date);
-              // }
-
-              await modal.present();
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel',
-          }
-        ]
-      })).present();
-    }
+  async editSharedMove(sm: SharedMove, i: number) {
+    this.closeSlidingItem('sharedSlidingItem', i);
+    let modal = await this.modalCtrl.create({ component: NewSharedMovePage, componentProps: { sharedMove: sm, isAdmin: this.isAdmin(sm), sharedKey: this.sharedKeys[i] } });
+    await modal.present();
   }
 
 }

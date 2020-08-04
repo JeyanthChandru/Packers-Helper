@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Move } from 'src/app/models/new-move/new-move.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NavParams, ModalController } from '@ionic/angular';
@@ -11,14 +11,14 @@ import { MoveService } from 'src/app/service/move.service';
 })
 export class NewMovePage implements OnInit {
 
-  move = {} as Move;
-  uid = undefined;
+  @Input() uid: string;
+  @Input() move: Move;
+
   public form: FormGroup
   minDate: String = new Date().toISOString();
   maxDate: any = new Date(new Date().setDate(new Date().getFullYear() + 10)).toISOString();
 
   constructor(
-    public navParams: NavParams,
     private modalController: ModalController,
     private moveDetails: MoveService,
     private _FB: FormBuilder) {
@@ -29,21 +29,17 @@ export class NewMovePage implements OnInit {
   }
 
   ngOnInit() {
-
-    if (this.navParams.get('uid') != undefined) {
-      this.uid = this.navParams.get('uid');
+    if (this.uid == undefined) {
+      this.closeModal();
     }
 
-    if (this.navParams.data.move != undefined) {
-      this.move = this.navParams.data.move;
+    if (this.move != undefined) {
       this.form.setValue({ name: this.move.name, date: this.move.date })
-      // this.move.date = new Date(this.move.date).toISOString().substring(0, 10);
     }
   }
 
-  addNew() {
-    let move = this.form.value;
-    if (this.navParams.data.move != undefined) {
+  addNew(move: Move) {
+    if (this.move != undefined) {
       this.moveDetails.updateMove(this.move.$key, move);
       this.modalController.dismiss({ edited: true });
     }

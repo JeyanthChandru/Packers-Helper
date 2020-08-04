@@ -27,7 +27,7 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button full clear [disabled]="!form.valid" (click)="addNew()">
+      <ion-button full clear [disabled]="!form.valid" (click)="addNew(form.value)">
         <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

@@ -1,9 +1,24 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>register</ion-title>
+    <ion-title>Register a New User</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" autocomplete="email" [(ngModel)]='user.email'></ion-input>
+    </ion-item>
 
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" autocomplete="password" [(ngModel)]='user.password'></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <ion-button expand="block" type="submit" (click)="register(user)" class="ion-no-margin">Register</ion-button>
+    <ion-button fill="clear" expand="block" (click)="login()">Go back to Login</ion-button>
+  </div>
 </ion-content>

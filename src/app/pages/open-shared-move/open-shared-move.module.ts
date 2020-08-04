@@ -4,18 +4,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { NewSharedMovePageRoutingModule } from './new-shared-move-routing.module';
+import { OpenSharedMovePageRoutingModule } from './open-shared-move-routing.module';
 
-import { NewSharedMovePage } from './new-shared-move.page';
+import { OpenSharedMovePage } from './open-shared-move.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     ReactiveFormsModule,
-    NewSharedMovePageRoutingModule
+    IonicModule,
+    OpenSharedMovePageRoutingModule
   ],
-  declarations: [NewSharedMovePage]
+  declarations: [OpenSharedMovePage]
 })
-export class NewSharedMovePageModule {}
+export class OpenSharedMovePageModule {}

@@ -39,6 +39,10 @@ const routes: Routes = [
     path: 'open-box',
     loadChildren: () => import('./pages/open-box/open-box.module').then( m => m.OpenBoxPageModule)
   },
+  {
+    path: 'open-shared-move',
+    loadChildren: () => import('./pages/open-shared-move/open-shared-move.module').then( m => m.OpenSharedMovePageModule)
+  },
 ];
 
 @NgModule({

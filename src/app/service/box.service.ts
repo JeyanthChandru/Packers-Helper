@@ -5,6 +5,7 @@ import { AngularFireList, AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
 import { NavigationExtras } from '@angular/router';
 import { Move } from '../models/new-move/new-move.model';
+import { SharedMove } from '../models/new-shared-move/new-shared-move.model';
 
 @Injectable({
   providedIn: 'root'
@@ -92,10 +93,11 @@ export class BoxService {
     return navigationExtras;
   }
 
-  populateSharedBox(sharedBox: Box) {
+  populateSharedBox(sharedBox: Box, sharedMove: SharedMove) {
     let navigationExtras : NavigationExtras = {
       state: {
-        sharedBox: sharedBox
+        sharedBox: sharedBox,
+        sharedMove: sharedMove
       }
     }
 
